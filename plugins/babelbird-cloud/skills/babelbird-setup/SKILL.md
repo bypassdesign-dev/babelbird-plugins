@@ -2,7 +2,7 @@
 name: babelbird-setup
 description: Use when first configuring the BabelBird plugin, entering or changing its API Key, or checking its MCP connection, including 巴别鸟首次使用、填写密钥和连接检查.
 metadata:
-  version: "0.2.0"
+  version: "0.2.1"
 ---
 
 # 巴别鸟首次设置
@@ -13,7 +13,7 @@ metadata:
    > 请在巴别鸟“设置 > API秘钥”打开对应应用，复制“APIKey”，并在当前宿主的私密凭据入口填写。这里需要 APIKey，不是 APP Key 或 APP Secret。
 2. Claude Code 使用插件的必填、敏感配置项 `api_key`；Codex 使用宿主进程可读取的 `BABELBIRD_API_KEY`。没有可用凭据时等待填写，不尝试演示密钥，也不发送未认证的业务调用。插件内只保留引用，真实值不得写入插件、项目或快照。
 3. 当前用户已经主动提供、或已经保存的凭据直接复用。环境变量不可见时先解决客户端进程的加载问题，不因超时或重启要求重新申请 API Key。不能把终端子进程中的变量设置视为已更新运行中的桌面客户端。
-4. 发现实际 MCP 工具，并调用 `getUsageAndQuota` 做只读检查。检查 MCP 错误和业务结果；只有对应请求返回有效业务结果才算通过。超时或断连最多重试一次，之后报告“凭据已配置，云端连接未验证”。
+4. 发现实际 MCP 工具，调用 `listFolder` 读取用户已指定的目录；尚未指定时使用 `fileId: "0", pageIndex: 0, pageSize: 1` 只读检查根目录。检查 MCP `isError` 及业务状态；有效成功响应（包括空目录）即可通过只读测试。目录读取超时或断连最多重试一次；仍失败才报告“凭据已配置，目录读取未验证”。默认跳过 `getUsageAndQuota`；如已有配额查询超时、`Transport closed` 或无业务结果的流结束，记录“配额未知，已跳过查询”，不重试、不阻塞设置，也不据此重新索要密钥。401/403、目录读取失败和明确空间不足仍须按实际响应处理。
 5. 分别报告“凭据已填写”“客户端可读取”“只读测试通过”的实际状态，报告中不出现密钥或鉴权头。配置引用可保存在宿主用户私有配置区，不能保存到工程或插件中。
 6. 到此完成设置。只有用户另行请求保存或恢复时，才进入 `babelbird-project-cloud` 的相应流程；设置过程不创建目录、不上传文件。
 

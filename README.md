@@ -1,8 +1,8 @@
-# 巴别鸟工程云存储插件 0.2.0
+# 巴别鸟工程云存储插件 0.2.1
 
 测试版，包含工程存储 Skill、首次设置 Skill、巴别鸟远程 MCP 配置，以及 Codex / Claude Code 安装入口。用户需要自己的巴别鸟 API Key。安装包不包含任何真实密钥。
 
-当前已验证插件结构和 Codex 原生识别，云端业务连接及工程上传／恢复尚未验证通过。请按测试版使用，具体限制见 [VALIDATION.md](VALIDATION.md)。
+当前已验证插件结构、Codex 原生识别和云端目录读取。配额查询默认跳过，超时不会阻塞连接检查或已授权的存储流程；工程上传／恢复尚未完成端到端验证。请按测试版使用，具体限制见 [VALIDATION.md](VALIDATION.md)。
 
 ## 从 GitHub 安装
 
@@ -11,7 +11,7 @@
 Codex 用户在终端执行：
 
 ```bash
-codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.2.0
+codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.2.1
 codex plugin add babelbird-cloud@babelbird-local
 ```
 
@@ -95,7 +95,9 @@ Claude Code 的适配配置已提供，本次没有运行该客户端进行实�
 
 工程保存使用独立 ZIP 快照，包含 SHA-256 清单与恢复说明，默认排除密钥和缓存。插件不提供后台同步或云端运行环境。
 
-2026-10-21 的服务测试已完成 MCP 初始化并发现 8 个工具；`getUsageAndQuota` 超时或流关闭，尚未获得有效业务结果。上传所需的 `fileHash` 算法及实际 HTTP 上传合同仍需服务端确认。因此，打包与插件识别通过不代表云端保存／恢复已经实测成功，Skill 会在未满足条件时报告阻塞。
+2026-10-22 的服务测试确认 `listFolder` 返回有效业务成功结果；`getUsageAndQuota` 在约 30 秒后结束响应流而没有业务结果。Skill 默认使用目录读取验证连接，不再等待配额查询；用户明确查询空间而遇到上述故障时，仅记录“配额未知，已跳过查询”，继续已授权的流程。401/403、目录读取失败、明确空间不足以及实际上传／下载错误仍正常处理。
+
+当前工具说明已明确 `fileHash` 使用文件 MD5；实际 HTTP 上传方法、字段和完成响应仍待确认。目录读取通过不代表工程保存／恢复已实测成功。
 
 验证范围和结果见 [VALIDATION.md](VALIDATION.md)。本包尚未发布到公共插件市场。
 
