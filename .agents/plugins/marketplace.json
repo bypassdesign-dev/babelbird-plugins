@@ -1,0 +1,20 @@
+{
+  "name": "babelbird-local",
+  "interface": {
+    "displayName": "巴别鸟工程云存储"
+  },
+  "plugins": [
+    {
+      "name": "babelbird-cloud",
+      "source": {
+        "source": "local",
+        "path": "./plugins/babelbird-cloud"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

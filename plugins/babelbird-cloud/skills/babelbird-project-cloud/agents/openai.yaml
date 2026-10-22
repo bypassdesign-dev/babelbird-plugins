@@ -1,0 +1,4 @@
+interface:
+  display_name: "巴别鸟工程云存储"
+  short_description: "将智能体工程文件保存到巴别鸟，并支持工程快照校验与跨设备恢复"
+  default_prompt: "使用 $babelbird-cloud:babelbird-project-cloud 将当前工程保存到我指定的巴别鸟目录，并报告保存与校验结果。"

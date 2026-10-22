@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "babelBird": {
+      "url": "https://www.babel.cc/mcp",
+      "bearer_token_env_var": "BABELBIRD_API_KEY",
+      "startup_timeout_sec": 20,
+      "tool_timeout_sec": 60
+    }
+  }
+}

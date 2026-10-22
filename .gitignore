@@ -1,0 +1,10 @@
+.DS_Store
+.www.babel.cc
+__pycache__/
+*.pyc
+.env
+.env.*
+*.key
+*.pem
+credentials.json
+secrets/

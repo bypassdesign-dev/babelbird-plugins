@@ -1,0 +1,19 @@
+{
+  "name": "babelbird-cloud",
+  "version": "0.2.0",
+  "author": {
+    "name": "bypassdesign-dev"
+  },
+  "repository": "https://github.com/bypassdesign-dev/babelbird-plugins",
+  "description": "巴别鸟工程文件云存储，包含首次连接引导及工程快照保存、校验和恢复流程。",
+  "mcpServers": "./mcp.claude.json",
+  "userConfig": {
+    "api_key": {
+      "type": "string",
+      "title": "巴别鸟 API Key",
+      "description": "在巴别鸟“设置 > API秘钥”复制应用的 APIKey；不是 APP Key 或 APP Secret。",
+      "required": true,
+      "sensitive": true
+    }
+  }
+}
