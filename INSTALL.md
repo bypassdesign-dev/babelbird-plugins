@@ -1,45 +1,42 @@
-# 交给智能体完成安装与首次连接
+# 安装巴别鸟并打开 API Key 页面
 
-本文供收到本仓库链接和“帮我安装”请求的 Codex、WorkBuddy 或其他智能体执行。只在用户要求安装／配置本插件时使用；用户仅询问信息时不执行安装。
+收到本仓库链接和“帮我安装”时执行。用户只询问信息、只下载或稍后配置时尊重其范围。
 
-## 完成条件
+## 安装版本
 
-安装包含三步：插件或 Skill 文件就位、引导用户填写自己的 API Key、读取个人文件目录验证连接。下载完成不代表连接成功。用户明确要求仅下载、离线安装或稍后配置时，按其要求停止并说明尚未连接。
+先判断实际宿主。检查已有安装与有效连接，不重复索要已配置的密钥。网页摘要可能陈旧，核对真实仓库文件及 ref，不能把 0.3.x 当成当前版本。
 
-## 1. 判断宿主并安装
-
-根据实际运行平台选择适配包，不根据对话中提到的模型名判断。先检查现有安装和连接，复用用户已有的有效配置，不覆盖不同账号或删除旧连接。
-
-**Codex：**先检查当前版本的 `codex plugin --help`，支持时执行：
+Codex 支持 `codex plugin` 时执行：
 
 ```bash
-codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.3.1
+codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.4.0
 codex plugin add babelbird-cloud@babelbird-local
 ```
 
-已有市场时按当前 CLI 的 marketplace upgrade／更新流程处理，核对实际加载的是 0.3.1。只有远程市场添加失败、但客户端支持 `codex plugin` 时，才参照 [README](README.md) 的本地市场方式。客户端没有插件命令时，明确说明版本不支持此安装方式，检查其实际提供的插件安装界面或引导更新到支持插件的版本；不能再次执行同类命令并声称安装成功，也不要用“重装整个 Codex”代替查明安装方式。
+用户给了明确的测试分支或其他 ref 时使用该 ref，不替换成尚未发布的 tag。已有市场按当前 CLI 的更新方式处理，并核对安装版本。远程添加失败可克隆相同 ref 并添加本地市场；没有插件命令时说明当前客户端不支持，不反复执行相同命令。
 
-**WorkBuddy：**按 [WorkBuddy 接入说明](workbuddy/babelbird-cloud/README.md) 安装该目录里的两项 Skill 到用户选定工程的 `.codebuddy/skills/`，保留所有 references 和 scripts；尚未提供工程目录时只询问该位置。当前 GitHub 包使用“自定义连接器”配置 MCP，不声称已上架 WorkBuddy 市场，也不运行 Codex 安装命令。
+## Codex 安装后立即打开页面
 
-## 2. 安装后立刻开始密钥引导
+读取安装包中的 [首次设置 Skill](plugins/babelbird-cloud/skills/babelbird-setup/SKILL.md)，在其目录执行：
 
-继续读取 [首次设置 Skill](plugins/babelbird-cloud/skills/babelbird-setup/SKILL.md) 和 [API Key 填写入口](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md)。无需让用户自己知道 Skill 名称，也不要只留下“请设置环境变量”或“去私密入口填写”。刚安装的 Skill 未加载时，可以先读取其源文件继续引导，工具验证需要实际宿主加载连接。
+```bash
+node scripts/setup-codex.mjs --start
+```
 
-如果已有连接，先复用并验证，不重新索要密钥。缺少凭据时，下一条面向用户的消息应包含：
+需要 Node.js 20+ 和可用的 Codex 可执行文件；由安装智能体检查与定位。助手自动打开默认浏览器并返回临时 `url`。在对话中也给出 **“填写 API Key”** 可点击链接，只让用户粘贴密钥、点击“保存并连接”。浏览器未自动启动时使用宿主浏览器工具打开返回的同一个 URL。
 
-- 插件文件已就位，还差巴别鸟连接；不能说“已经可以同步”。
-- [官方 API Key 获取教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)，并用一句话说明“设置 > API秘钥 > 应用详情 > APIKey”。
-- 当前宿主的真实菜单路径和逐项填写值，尤其说明 APIKey 粘贴在哪个字段。默认引导用户在客户端里填写，不要求把密钥发到聊天。
-- 填写并保存后的下一步，例如选择客户端的 Restart／重启，然后回复“已填写”，继续只读检查。
+**默认流程不能交接为教程、MCP 菜单、请求头或环境变量配置步骤。**没有密钥时页面提供获取按钮。不要要求把密钥发到聊天，不读取或打印鉴权头。
 
-能调用宿主提供的凭据表单或打开已确认的设置入口时可直接使用；没有此能力就给出明确步骤。不能伪造弹窗、声称已打开界面，或让用户去找尚未安装／上架的表单。
+启动后按 Skill 使用 `--wait` 自动等待页面结果，每次有界等待最多 25 秒。不要让用户额外发送“已填写”，也不要只发链接就宣称设置完成。成功、助手退出、十分钟过期或用户取消时结束等待；关闭标签页不会立即停止助手。远程／无本机浏览器的实际限制才使用 [备用填写方法](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md)。
 
-有可用的等待输入工具时等待用户完成，同时继续不依赖凭据的安装检查。用户未填写时，不尝试无认证业务调用，不循环催促，也不声称连接完成。用户已经主动提供密钥时按首次设置流程处理，不要求重复发送。
+## 完成条件
 
-## 3. 只读验证与交接
+助手 `connected` 表示个人文件与一页目录读取成功，且用户私有 MCP 配置已保存。它会保留其他连接与 Skill，仅关闭已安装巴别鸟插件内的重复 MCP。
 
-从实际加载的巴别鸟 MCP 工具读取 `/个人文件`，再用返回的目录 ID 列出一页内容。检查 MCP 与业务结果均成功；不查询配额，不上传测试文件。失败时区分缺少凭据、客户端未加载配置、目录权限或服务错误，并给出对应的下一步。
+核对当前宿主是否加载新连接。已加载时调用实际 MCP 工具复查；未加载时说明“已保存并通过页面检查，请重启 Codex 一次”，重启后直接复用配置验证，不重新要求密钥。页面直连成功和当前会话工具加载是两个状态，分别如实报告。
 
-完成后简洁说明实际状态：“插件已安装，密钥已配置，只读连接已验证”。若尚未填写或重启，明确只完成了哪些步骤。
+默认跳过配额，不上传测试文件。用户仅安装时不绑定或扫描上传工程；用户同时要求同步时，连接通过后按原请求建立绑定。Codex 默认 `个人文件/codex/工程名/`，跨平台续接复用原目录。
 
-如果用户同时要求同步当前工程，按原请求建立绑定并执行首次同步；仅要求安装时提供一句后续用语“为当前工程启用巴别鸟自动同步”，不自行扫描和上传工程。Codex 新工程默认 `个人文件/codex/工程名/`，WorkBuddy 默认 `个人文件/workbuddy/工程名/`；跨平台续接复用用户指定的原目录。
+## WorkBuddy 和 Claude Code
+
+WorkBuddy 按 [专用说明](workbuddy/babelbird-cloud/README.md) 安装两项 Skill 到选定工程的 `.codebuddy/skills/` 并使用自定义连接器。当前版本未实现 WorkBuddy 本地页自动配置；不要运行 Codex 助手，不声称已上架 WorkBuddy 市场。Claude Code 使用插件敏感配置项 `api_key`。

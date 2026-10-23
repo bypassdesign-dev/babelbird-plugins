@@ -8,6 +8,8 @@ Codex 读取 `.codex-plugin/plugin.json` 和 `mcp.codex.json`；Claude Code 读�
 
 ## 首次配置流程
 
+**Codex 0.4.0 默认先执行本地设置页：**安装后读取 `babelbird-setup` Skill，运行 `node scripts/setup-codex.mjs --start`，让用户只粘贴 API Key。助手自动检查并保存，智能体通过 `--wait` 等待完成；宿主未加载连接时提示重启一次。下面涉及 MCP 菜单和环境变量的步骤只作备用方式，不能取代本地页。WorkBuddy 和 Claude Code 继续使用各自的配置入口。
+
 1. 用户要求安装本插件时，在文件安装完成后主动继续首次设置。提供 [官方 API Key 教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html) 和 [获取步骤](api-key.md)。检查当前用户已有连接与凭据引用，有效则复用。缺少时说明“还差 API Key 配置”，再按 [具体填写入口](credential-entry.md) 给出当前宿主的菜单、字段、填写值和保存后的下一步；不要只让用户寻找抽象的私密入口。
 2. Codex 桌面可以在“设置 > MCP 服务器”建立用户级个人连接，通过 Headers 的 Authorization 填入 Bearer 加空格和自己的 APIKey；Bearer token env var 留空。保留插件 Skill，个人连接验证通过后仅关闭内置重复 MCP 入口。Codex CLI 可保留内置 MCP 的 BABELBIRD_API_KEY 环境变量，使用文档中的隐藏输入命令。WorkBuddy 当前 GitHub 安装使用自定义远程 MCP 的 Authorization 请求头；只有实际出现完整连接器的 Token 表单时，才在必填密码项 BABELBIRD_API_KEY 填纯 APIKey。Claude Code 使用插件敏感配置项 api_key。填写步骤见上面的具体入口文档，不需要用户掌握环境变量知识。
 3. Codex 的环境变量必须存在于实际运行客户端的进程环境。已启动桌面应用不会自动取得子终端的新变量。终端会话变量并非永久保存；需要跨次启动复用时，将凭据保存到用户私有凭据管理器，并通过启动器注入。已登记的凭据不应反复索要；先解决加载问题。不要暗中改变系统全局环境或将明文写入共享启动脚本。

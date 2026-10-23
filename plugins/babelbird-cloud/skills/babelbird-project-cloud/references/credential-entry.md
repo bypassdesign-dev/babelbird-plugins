@@ -6,7 +6,15 @@
 
 打开 [巴别鸟官方教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)，登录巴别鸟后进入“设置 > API秘钥”，创建或打开应用，复制应用详情里的 **APIKey**。不是 APP Key，也不是 APP Secret。需要详细权限说明时看 [获取 API Key](api-key.md)。
 
-## Codex 桌面：通过客户端设置填写
+## Codex 默认：自动打开本地设置页
+
+安装智能体在 `babelbird-setup` Skill 目录运行 `node scripts/setup-codex.mjs --start`，自动打开仅含 API Key 的本地页面，同时给用户返回的填写链接。用户粘贴密钥、点击“保存并连接”；助手自动读取个人文件并保存用户私有配置。使用 `--wait` 等待结果，不要求用户额外回复“已填写”。
+
+需要 Node.js 20+ 和 Codex，可由安装智能体检查。页面在同一台电脑上运行，默认十分钟内有效；成功后退出。页面会保留其他账号及设置，不能将它用于企业私有化地址。宿主尚未加载新连接时只需重启 Codex 一次，之后复用密钥验证。
+
+以下桌面和 CLI 方法仅用于不支持本地页面的环境排障，不作为小白默认步骤。
+
+## Codex 备用：通过客户端设置填写
 
 适用于提供 MCP servers 设置的 ChatGPT 桌面／Codex 客户端。菜单语言可能不同，英文名称一并列出。这个入口是客户端原有的连接表单，不是本插件自定义的安装密码框。
 
@@ -69,10 +77,8 @@ codex
 
 GitHub 连接器包尚未上架 WorkBuddy 市场，所以当前不能要求用户去找其不存在的安装 Token 表单。只有通过支持完整连接器包的宿主／平台安装、并且实际出现表单时，才在 **巴别鸟 API Key** 密码项填写纯 APIKey（不加 Bearer）；该表单会自动组装请求头。
 
-## 安装后没有弹窗
+## 安装后没有打开页面
 
-Codex 支持 onboardingSkill 时，安装后可出现“设置巴别鸟”入口，它会启动设置对话，不直接收集密钥。当前 0.163.0-alpha.10.2 原生读取已识别本插件的首次设置 Skill；旧客户端和 CLI 的表现可能不同。
-
-不需要重新安装才能开始引导：向智能体发送“请继续配置巴别鸟 API Key，告诉我在当前客户端哪里填写，并做只读连接检查”。安装智能体应主动进入上述流程；自动弹窗不是安装完成的必要条件。
+直接告诉智能体“打开巴别鸟密钥填写页面”。Codex 0.4.0 的安装智能体应运行助手并给出可点击入口；它是本机浏览器页面，不是原生安装密码框。只在实际无法运行页面时采用上述备用方法。
 
 参考：[Codex MCP 配置](https://learn.chatgpt.com/docs/extend/mcp?surface=cli)、[Codex 插件安装引导](https://developers.openai.com/plugins/build/plugins)、[WorkBuddy 连接器](https://open.workbuddy.cn/docs/connector)。

@@ -1,28 +1,20 @@
-# 巴别鸟工程云存储插件 0.3.1
+# 巴别鸟工程云存储插件 0.4.0
 
 将工程按原文件和目录结构保存到巴别鸟，并在智能体任务开始前拉取更新、每批修改完成后自动上传。工程不打包成 ZIP。支持 Codex / Claude Code 插件适配及 WorkBuddy 专用连接器包；每位用户使用自己的 API Key，包内不含真实密钥。
 
-## 小白用户：把链接交给智能体即可开始
+## Codex：安装后只填一个 API Key
 
-把下面这句话发给 **Codex 或 WorkBuddy**：
+把这一句交给 Codex：
 
-> 请帮我安装 https://github.com/bypassdesign-dev/babelbird-plugins 。安装后请继续带我配置巴别鸟 API Key：告诉我如何获取、在当前客户端哪里填写，等我填好后做一次只读连接检查。不要只下载文件就结束。
+> 帮我安装 https://github.com/bypassdesign-dev/babelbird-plugins/tree/v0.4.0
 
-智能体应依次完成：识别平台并安装 → 引导获取和填写 API Key → 验证连接。如果客户端没有自动弹窗，它应直接告诉你点哪个菜单、在哪个字段粘贴。**API Key 填在自己的客户端中，不需要发到 GitHub 或公开聊天里。**
+智能体安装后会自动打开“连接巴别鸟”本地页面。**粘贴 API Key → 点击“保存并连接”**，即可自动检查连接和保存配置，不需要找 MCP 菜单或填写请求头。页面上也有“打开巴别鸟获取”按钮。
 
-已经安装但找不到输入位置，可以直接说：
+如果浏览器没有自动打开，点击智能体提供的“填写 API Key”链接。也可以说“打开巴别鸟密钥填写页面”。首次保存后，如果 Codex 尚未加载新连接，只需按提示重启一次；密钥不需要重复填写。
 
-> 请继续配置巴别鸟 API Key，按我当前的平台一步一步告诉我在哪里填写。
+本地页需要 Node.js 20+、支持插件及配置 API 的 Codex 和同一台电脑上的浏览器。远程／无浏览器环境使用 [备用方法](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md)。本版页面自动配置仅适用于 Codex；WorkBuddy 保留自定义连接器方式。
 
-填写位置速查：
-
-| 使用平台 | 现在可以使用的入口 |
-| --- | --- |
-| Codex 桌面 | 设置 → MCP 服务器 → 添加服务器；在 Headers 中填写 Authorization，详见 [逐项填写说明](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md) |
-| WorkBuddy | 专家·技能·连接器 → 连接器 → 自定义连接器；新增巴别鸟远程 MCP 并填写请求头 |
-| Codex CLI | 按填写说明在终端隐藏输入，再从该终端启动 Codex；不要把密钥直接写进命令 |
-
-**给负责安装的智能体：**用户请求安装本仓库时，先读 [INSTALL.md](INSTALL.md)，安装后主动读取并执行首次设置 Skill。检查已有连接；缺少密钥时提供本平台的具体填写方法并等待用户。仅安装文件不能报告“连接成功”。用户仅要求下载或稍后配置时尊重其选择。
+**给安装智能体：**先读 [INSTALL.md](INSTALL.md)，安装后立即执行包内 `babelbird-setup` Skill 启动本地页面，等待其连接结果。不要只下载后结束，也不要把教程或手工 MCP 字段作为默认下一步。网页摘要可能滞后，核对实际仓库 ref 和安装版本；推荐上面的固定版本链接。
 
 ## 默认目录与跨设备继续
 
@@ -44,37 +36,18 @@
 
 ## Codex 安装
 
+普通用户直接把上面的链接交给智能体。以下命令供安装智能体执行：
+
 ```bash
-codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.3.1
+codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.4.0
 codex plugin add babelbird-cloud@babelbird-local
 ```
 
-也可解压完整插件分发包，在包含本 README 和 .agents 的目录执行 `codex plugin marketplace add .`，再添加插件。保留本地市场目录。需要支持 `codex plugin` 的客户端。
+安装后在包内 `skills/babelbird-setup` 目录执行 `node scripts/setup-codex.mjs --start`，自动打开单项密钥页面。用 `--wait` 等待结果，或用 `--status` 查看状态。完整流程见 [首次设置 Skill](plugins/babelbird-cloud/skills/babelbird-setup/SKILL.md)。
 
-**桌面用户优先使用设置表单。**打开“设置 > MCP 服务器 > 添加服务器”，类型选择 Streamable HTTP，地址填 `https://www.babel.cc/mcp`，Headers 的名称填 `Authorization`，值填 `Bearer ` 加自己的 APIKey（中间一个空格）。Bearer token env var 留空。保存后按客户端提示重启，再让智能体验证连接并处理重复入口；完整步骤见 [API Key 填写入口](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md)。
+页面只在本机临时运行，成功或超时后退出。通过个人文件读取检查后，助手调用 Codex 配置接口保存用户私有连接，保留其他设置和账号，不把密钥放进工程。已有有效连接直接复用。安装本身不上传工程。
 
-**CLI 用户可以使用插件内置环境变量方式。**macOS / Linux 先进入 Bash，再私密输入并启动：
-
-```bash
-read -r -s -p '巴别鸟 API Key: ' BABELBIRD_API_KEY
-export BABELBIRD_API_KEY
-codex
-```
-
-Windows PowerShell：
-
-```powershell
-$babelSecret = Read-Host '巴别鸟 API Key' -AsSecureString
-$env:BABELBIRD_API_KEY = [System.Net.NetworkCredential]::new('', $babelSecret).Password
-Remove-Variable babelSecret
-codex
-```
-
-临时变量不等于永久保存，已运行的桌面客户端不会继承后来设置的变量。桌面设置表单保存的是用户级个人连接，验证后由智能体关闭插件内置的重复 MCP 入口并保留 Skill。已有有效连接直接复用。
-
-插件声明了首次设置 Skill；当前 Codex 0.163.0-alpha.10.2 已能识别 onboardingSkill，支持的安装界面可以提供“设置巴别鸟”入口，点击后进入设置对话。它不是 API Key 密码框，不保证所有客户端自动弹窗。没有弹窗时安装智能体仍应主动继续引导；也可直接发送：
-
-> 使用 $babelbird-cloud:babelbird-setup 配置巴别鸟，并为当前工程启用任务开始前、每批修改后自动同步。
+插件声明 onboardingSkill，支持的客户端可提供首次设置入口；从 GitHub 链接安装时由安装智能体启动页面，不依赖安装界面自动执行钩子。不支持此流程的客户端不能声称安装已连接。
 
 ## WorkBuddy 安装与接入
 
@@ -116,6 +89,6 @@ WorkBuddy 官方支持 [MCP + Skill 连接器及 API Key 表单](https://open.wo
 
 仓库：[bypassdesign-dev/babelbird-plugins](https://github.com/bypassdesign-dev/babelbird-plugins)。Releases 同时提供 Codex / Claude 插件包和 WorkBuddy 连接器包；压缩包仅用于分发安装，工程内容以原文件存储。
 
-修改共享 Skill 后同步 WorkBuddy 对应正文、引用文件和脚本；WorkBuddy 的 frontmatter 包含其专用中英文描述等字段。分发仅纳入正式文件，排除 .www.babel.cc、缓存和凭据。
+修改共享工程同步 Skill 后同步 WorkBuddy 对应正文、引用文件和脚本；首次设置按宿主分别维护，Codex 本地页面不混入 WorkBuddy 包；WorkBuddy 的 frontmatter 包含其专用中英文描述等字段。分发仅纳入正式文件，排除 .www.babel.cc、缓存和凭据。
 
-验证命令：`node --test tests/project-sync.test.mjs`。格式依据：[Codex 插件](https://developers.openai.com/plugins/build/plugins)、[Claude Code 插件](https://code.claude.com/docs/en/plugins-reference)、[WorkBuddy 连接器](https://open.workbuddy.cn/docs/connector)。
+验证命令：`node --test tests/*.test.mjs`。格式依据：[Codex 插件](https://developers.openai.com/plugins/build/plugins)、[Claude Code 插件](https://code.claude.com/docs/en/plugins-reference)、[WorkBuddy 连接器](https://open.workbuddy.cn/docs/connector)。
