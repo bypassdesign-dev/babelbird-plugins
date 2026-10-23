@@ -63,3 +63,15 @@ test('native Codex writes preserve config, reuse same key, and retain a differen
     if (process.platform !== 'win32') assert.equal((await stat(path)).mode & 0o777, 0o600);
   } finally { await rm(home, { recursive: true, force: true }); }
 });
+
+test('adding a personal account preserves existing plugin connection settings', async () => {
+  const home = await mkdtemp(join(tmpdir(), 'babelbird-config-test-'));
+  try {
+    const path = join(home, 'config.toml');
+    await writeFile(path, '[plugins."babelbird-cloud@babelbird-local"]\nenabled = true\n[plugins."babelbird-cloud@babelbird-local".mcp_servers.babelBird]\nenabled = true\n', { mode: 0o600 });
+    await saveCodexConnection('fake-account-B-key', { codexHome: home });
+    const content = await readFile(path, 'utf8');
+    assert.match(content, /\[plugins\."babelbird-cloud@babelbird-local"\.mcp_servers\.babelBird\]\s+enabled = true/);
+    assert.match(content, /fake-account-B-key/);
+  } finally { await rm(home, { recursive: true, force: true }); }
+});

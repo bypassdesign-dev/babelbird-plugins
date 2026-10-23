@@ -21,6 +21,11 @@ form.addEventListener('submit', async event => {
     const response = await fetch('connect', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apiKey }) });
     const data = await response.json();
     if (!response.ok || data.status !== 'connected') {
+      if (data.saved) {
+        keyInput.value = '';
+        form.hidden = true;
+        document.getElementById('acquire').hidden = true;
+      }
       message(data.error || '连接未完成，请重试。', 'error');
       return;
     }

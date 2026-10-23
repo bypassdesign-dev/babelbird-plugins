@@ -57,8 +57,9 @@ export async function startSetup({ checkConnection, saveConnection, onComplete =
     if (request.headers.origin !== origin || request.headers['sec-fetch-site'] === 'cross-site' || request.headers['content-type']?.split(';')[0] !== 'application/json') {
       json(403, { error: '请在本机设置页中提交。' }); return;
     }
-    if (state !== 'waiting') { json(409, { error: state === 'connected' ? '连接已保存，可以返回 Codex。' : '正在连接，请稍候。' }); return; }
+    if (state !== 'waiting') { json(409, { error: ['connected', 'saved_status_error'].includes(state) ? '连接已保存，可以返回 Codex。' : '正在连接，请稍候。' }); return; }
     state = 'receiving';
+    let saved = false;
     try {
       const input = await bodyJson(request);
       if (!input || Object.keys(input).length !== 1 || !Object.hasOwn(input, 'apiKey')) throw new SetupError('invalid_key', '请只填写 API Key。');
@@ -69,17 +70,19 @@ export async function startSetup({ checkConnection, saveConnection, onComplete =
       await checkConnection(key);
       if (state === 'expired') throw new SetupError('expired', '设置页已过期，请让智能体重新打开。');
       state = 'saving';
-      const saved = await saveConnection(key);
+      const connection = await saveConnection(key);
+      saved = true;
+      const result = { status: 'connected', serverName: connection.serverName, reused: connection.reused, checkedAt: new Date().toISOString() };
+      await onComplete(result);
       state = 'connected';
       clearTimeout(timer);
-      const result = { status: 'connected', serverName: saved.serverName, reused: saved.reused, checkedAt: new Date().toISOString() };
-      await onComplete(result);
       json(200, result);
       successTimer = setTimeout(() => { void close(); }, 1500);
     } catch (error) {
-      if (state !== 'expired') state = 'waiting';
-      const safe = error instanceof SetupError ? error : new SetupError('connection', '连接未完成，请稍后重试。');
-      if (!response.destroyed) json(safe.code === 'too_large' ? 413 : safe.code === 'invalid_key' ? 400 : 422, { error: safe.message, code: safe.code });
+      if (state !== 'expired') state = saved ? 'saved_status_error' : 'waiting';
+      if (saved) successTimer = setTimeout(() => { void close(); }, 1500);
+      const safe = saved ? new SetupError('saved_status_error', '连接已通过，密钥也已保存，但无法记录安装进度。请回到 Codex 检查连接，无需再次填写。') : error instanceof SetupError ? error : new SetupError('connection', '连接未完成，请稍后重试。');
+      if (!response.destroyed) json(safe.code === 'too_large' ? 413 : safe.code === 'invalid_key' ? 400 : 422, { error: safe.message, code: safe.code, ...(saved ? { saved: true } : {}) });
     }
   });
   server.requestTimeout = 10000;
@@ -96,7 +99,7 @@ export async function startSetup({ checkConnection, saveConnection, onComplete =
     if (state === 'connected') return;
     state = 'expired';
     await close();
-    await onComplete({ status: 'expired', expiresAt });
+    try { await onComplete({ status: 'expired', expiresAt }); } catch { /* Listener is already closed even when status storage is unavailable. */ }
   }
   timer = setTimeout(() => { void expire(); }, ttlMs);
   return { url: `${origin}${prefix}`, expiresAt, close };

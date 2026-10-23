@@ -2,7 +2,7 @@
 name: babelbird-project-cloud
 description: Use when setting up BabelBird project sync, binding or restoring a cloud project, or starting and finishing work in a project with .babelbird-sync.json, including 巴别鸟自动保存、跨设备或跨智能体同步工程. Requires local file access and authenticated BabelBird MCP.
 metadata:
-  version: "0.3.1"
+  version: "0.4.0"
 ---
 
 # 巴别鸟工程云存储
@@ -13,7 +13,7 @@ metadata:
 
 首次使用必须先要求用户填写自己的巴别鸟 API Key。提示中提供 [官方获取教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)，具体步骤见 [获取 API Key](references/api-key.md)。这里需要 APP 详情上方的 APIKey，不是 APP Key 或 APP Secret。
 
-读取 [首次配置流程](references/setup.md#首次配置流程) 和 [API Key 填写入口](references/credential-entry.md)，给出实际宿主的菜单、字段、填写内容与保存后的下一步，不能只提示“去私密入口填写”。安装后缺少凭据时主动进入首次设置引导。用户已提供或登记过凭据时直接复用，不重复索要；普通超时不等于密钥失效。只有明确凭据无效或用户更换账号／密钥时，才重新填写。真实密钥不得放进工程或分发包。
+读取 [首次配置流程](references/setup.md#首次配置流程) 和 [API Key 填写入口](references/credential-entry.md)。Codex 缺少凭据时主动执行 `babelbird-setup`，打开本地单项 API Key 页面并自动等待结果，不让用户寻找设置菜单。WorkBuddy／Claude Code 按各自入口给出字段与保存后的下一步。用户已提供或登记过凭据时直接复用，不重复索要；普通超时不等于密钥失效。只有明确凭据无效或用户更换账号／密钥时，才重新填写。真实密钥不得放进工程或分发包。
 
 ## 连接与能力
 

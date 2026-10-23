@@ -78,9 +78,6 @@ export async function saveCodexConnection(apiKey, { codexHome = codexHomePath(),
       while (Object.hasOwn(servers, serverName)) serverName = `babelBirdPersonal${suffix++}`;
     }
     const edits = same ? [] : [{ keyPath: `mcp_servers.${serverName}`, mergeStrategy: 'replace', value: { url: MCP_URL, http_headers: { Authorization: authorization }, startup_timeout_sec: 20, tool_timeout_sec: 60 } }];
-    for (const pluginId of Object.keys(snapshot.config?.plugins || layer.config?.plugins || {})) {
-      if (pluginId.startsWith('babelbird-cloud@')) edits.push({ keyPath: `plugins.${JSON.stringify(pluginId)}.mcp_servers.babelBird.enabled`, mergeStrategy: 'replace', value: false });
-    }
     if (edits.length) {
       const result = await client.request('config/batchWrite', { edits, filePath: path, expectedVersion: layer.version, reloadUserConfig: false });
       if (result.status !== 'ok') throw new SetupError('config', '配置已保存，但被管理策略覆盖，请联系管理员检查。');

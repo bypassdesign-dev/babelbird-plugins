@@ -81,3 +81,17 @@ test('expired setup closes its listener and reports expiry', async () => {
   await assert.rejects(fetch(app.url));
   await app.close();
 });
+
+test('failed completion persistence cannot leave the setup listener running past expiry', async () => {
+  const app = await setup({ ttlMs: 80, onComplete: async result => { if (result.status === 'connected') throw new Error('disk unavailable'); } });
+  try {
+    const response = await submit(app, { apiKey: 'fake' });
+    assert.equal(response.status, 422);
+    const result = await response.json();
+    assert.equal(result.saved, true);
+    assert.equal(result.code, 'saved_status_error');
+    assert.equal((await submit(app, { apiKey: 'fake' })).status, 409);
+    await new Promise(resolve => setTimeout(resolve, 160));
+    await assert.rejects(fetch(app.url));
+  } finally { await app.close(); }
+});
