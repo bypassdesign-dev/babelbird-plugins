@@ -4,30 +4,32 @@
 
 插件已经包含工程存储 Skill、首次设置 Skill 和巴别鸟 MCP 配置。宿主还需具备本地文件读写与文件网络传输能力。MCP 服务地址为 `https://www.babel.cc/mcp`，逻辑服务名为 `babelBird`；宿主可能添加插件前缀。
 
-Codex 读取 `.codex-plugin/plugin.json` 和 `mcp.codex.json`；Claude Code 读取 `.claude-plugin/plugin.json` 和 `mcp.claude.json`。插件版 Skill 不重复声明 MCP 依赖，避免安装两个连接。完整安装与凭据加载步骤见分发包根目录的 README。
+Codex 读取 `.codex-plugin/plugin.json` 和 `mcp.codex.json`；Claude Code 读取 `.claude-plugin/plugin.json` 和 `mcp.claude.json`。WorkBuddy 使用独立连接器包的 `connector-meta.json`、`mcp.json` 与 `token-schema.json`，不读取 Codex／Claude 的插件清单。插件版 Skill 不重复声明 MCP 依赖。
 
 ## 首次配置流程
 
-1. 检查当前用户是否已填写 API Key，或宿主是否有已登记的凭据引用。没有时，必须先提示用户前往巴别鸟“设置 > API秘钥”，复制对应应用的“APIKey”，在宿主的私密凭据入口填写。不要使用 APP Key、APP Secret、演示密钥或其他用户的凭据。
-2. Claude Code 使用插件必填的敏感配置项 `api_key`，由宿主保存到安全凭据存储并代入请求头。Codex 使用 `BABELBIRD_API_KEY` 环境变量引用；引导用户通过私密终端输入或其凭据管理器注入启动环境。真实密钥不得写入可分发文件。
+1. 首次引导提供 [官方 API Key 教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html) 和 [获取步骤](api-key.md)。检查当前用户是否已填写 API Key，或宿主是否有已登记的凭据引用。没有时，必须先提示用户前往巴别鸟“设置 > API秘钥”，复制对应应用的“APIKey”，在宿主的私密凭据入口填写。不要使用 APP Key、APP Secret、演示密钥或其他用户的凭据。
+2. Claude Code 使用插件必填的敏感配置项 `api_key`，由宿主保存到安全凭据存储并代入请求头。Codex 使用 `BABELBIRD_API_KEY` 环境变量引用；引导用户通过私密终端输入或其凭据管理器注入启动环境。WorkBuddy 连接器使用必填密码字段 `BABELBIRD_API_KEY`，通过 `auth_mode: token` 的本机表单保存并注入请求头，表单提供官方教程链接；不要要求 WorkBuddy 用户设置 Codex 环境变量。真实密钥不得写入可分发文件。
 3. Codex 的环境变量必须存在于实际运行客户端的进程环境。已启动桌面应用不会自动取得子终端的新变量。终端会话变量并非永久保存；需要跨次启动复用时，将凭据保存到用户私有凭据管理器，并通过启动器注入。已登记的凭据不应反复索要；先解决加载问题。不要暗中改变系统全局环境或将明文写入共享启动脚本。
 4. 当前用户已经主动提供 API Key 时，视为已填写，可在其授权的用户私有配置区完成接入。仅记录服务地址、账号用途和凭据引用，不记录密钥明文到项目或插件。不要把插件 MCP 的静态配置改成硬编码鉴权头。
-5. 使用真实 `listFolder` 工具读取用户指定的目录；尚未指定时使用 `fileId: "0", pageIndex: 0, pageSize: 1`。核对 MCP `isError` 及业务状态，有效成功响应（包括空目录）才算只读连接验证通过。分别记录凭据已保存／可读取、目录读取已验证。目录读取超时或断连最多重试一次，仍失败则保留错误并报告“目录读取未验证”。401/403 按实际响应处理；不能据一般传输故障断定密钥无效。
+5. 使用 `getFileInfoByPath` 定位用户指定目录或默认 `/个人文件`，确认业务成功与目录类型，再将真实目录 ID 传给 `listFolder`，使用 `pageIndex: 0, pageSize: 1`。不要将协议根目录 `0` 当作个人文件。核对 MCP `isError` 及业务状态，有效成功响应（包括空目录）才算只读连接验证通过。分别记录凭据已保存／可读取、目录读取已验证。目录读取超时或断连最多重试一次，仍失败则保留错误并报告“目录读取未验证”。401/403 按实际响应处理；不能据一般传输故障断定密钥无效。
 6. 默认跳过 `getUsageAndQuota`。仅在用户明确要求查询空间时调用；配额查询超时、`Transport closed` 或 SSE 流结束但无对应业务结果时，记录“配额未知，已跳过查询”，不重试、不阻塞设置和已授权的存储流程。此例外不适用于鉴权失败、目录读取失败、明确空间不足或真实上传／下载错误。初始化成功、工具列表可见和 HTTP 200 都不能替代成功的目录读取。
-7. 连接通过后，按用户实际的保存／恢复请求补齐工程和云端目录信息。首次设置本身不授权上传、创建目录或覆盖文件。
+7. 连接通过后按用户实际的保存／恢复请求执行。保存默认采用 Codex 的 `/个人文件/codex/<工程名>/` 或 WorkBuddy 的 `/个人文件/workbuddy/<工程名>/`，用户指定目录优先；当前工程和宿主已明确时不再追问目标。首次设置本身不授权上传、创建目录或覆盖文件。
 
 ## 已有连接与私有化部署
 
 已有独立 Skill 或 MCP 连接时，避免重复安装同一 Skill 和重复连接。用户要求迁移时，在插件连接验证成功后再处理旧配置，保留可恢复的原配置；首次设置不能默认删除旧连接。
 
-企业私有化部署需先取得管理员提供的 MCP 地址，再同时更新两个 MCP 配置文件中的 URL。更新安装前的源包并重新安装，不直接修改插件缓存。仅向用户确认的服务地址发送凭据。
+企业私有化部署需先取得管理员提供的 MCP 地址，再更新实际使用的宿主适配配置中的 URL。更新安装前的源包并重新安装，不直接修改插件缓存。仅向用户确认的服务地址发送凭据。
 
 ## 只读检查之后
 
-工具参数和上传限制见 [MCP 接口](mcp-tools.md)。首次传输验证只使用用户明确授权的文件，完成上传、列表核对、下载回读和 SHA-256 比较。服务端上传合同不明确时停在本地打包，不能猜测 `fileHash` 算法或把获取上传 URL 当成上传成功。
+工具参数和上传限制见 [MCP 接口](mcp-tools.md)。首次传输验证只使用用户明确授权的文件，完成上传、列表核对、下载回读和 SHA-256 比较。公有云实际上传协议已验证；其他部署按返回合同核对，不能猜测字段或把获取上传 URL 当成上传成功。启用工程自动同步后按 [同步执行](sync.md) 建立绑定和共同基线。
 
 ## 资料
 
 - [巴别鸟 MCP 文档](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)
 - [Codex 插件格式](https://developers.openai.com/plugins/build/plugins)
 - [Claude Code 插件及敏感配置](https://code.claude.com/docs/en/plugins-reference)
+
+- [WorkBuddy 连接器与 Token 表单](https://open.workbuddy.cn/docs/connector)

@@ -1,16 +1,16 @@
 {
   "name": "babelbird-cloud",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "author": {
     "name": "bypassdesign-dev"
   },
   "repository": "https://github.com/bypassdesign-dev/babelbird-plugins",
-  "description": "巴别鸟工程文件云存储：首次配置个人 API Key，保存、校验并恢复工程快照。",
+  "description": "巴别鸟工程文件云存储：首次配置个人 API Key，保存、校验并恢复工程文件。",
   "skills": "./skills/",
   "mcpServers": "./mcp.codex.json",
   "interface": {
     "displayName": "巴别鸟工程云存储",
-    "shortDescription": "配置个人密钥，将工程快照保存到巴别鸟",
+    "shortDescription": "配置个人密钥，将工程文件保存到巴别鸟",
     "longDescription": "提供首次连接引导和工程文件保存、下载、校验、恢复流程。需要用户自己的巴别鸟 API Key；实际传输取决于服务端可用性与上传协议。",
     "category": "Productivity",
     "capabilities": [

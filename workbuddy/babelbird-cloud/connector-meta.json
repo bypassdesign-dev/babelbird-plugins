@@ -1,0 +1,21 @@
+{
+  "name": "巴别鸟工程同步",
+  "name_zh": "巴别鸟工程同步",
+  "name_en": "BabelBird Project Sync",
+  "description": "按目录同步工程文件，任务前拉取、修改后保存，支持跨设备和跨智能体继续工作。",
+  "description_zh": "按目录同步工程文件，任务前拉取、修改后保存，支持跨设备和跨智能体继续工作。",
+  "description_en": "Synchronize project files before and after agent tasks and resume the same cloud project on another device or agent.",
+  "source": "bypassdesign-babelbird-cloud",
+  "type": "mcp",
+  "version": "0.3.0",
+  "auth_mode": "token",
+  "minWorkbuddyVersion": "4.24.0",
+  "examples_zh": [
+    "为当前工程启用巴别鸟自动同步",
+    "从个人文件/codex/网站改版继续工作"
+  ],
+  "examples_en": [
+    "Enable BabelBird synchronization for this project",
+    "Continue working with my existing cloud project"
+  ]
+}

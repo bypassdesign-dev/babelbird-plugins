@@ -1,51 +1,35 @@
-# 巴别鸟工程云存储插件 0.2.1
+# 巴别鸟工程云存储插件 0.3.0
 
-测试版，包含工程存储 Skill、首次设置 Skill、巴别鸟远程 MCP 配置，以及 Codex / Claude Code 安装入口。用户需要自己的巴别鸟 API Key。安装包不包含任何真实密钥。
+将工程按原文件和目录结构保存到巴别鸟，并在智能体任务开始前拉取更新、每批修改完成后自动上传。工程不打包成 ZIP。支持 Codex / Claude Code 插件适配及 WorkBuddy 专用连接器包；每位用户使用自己的 API Key，包内不含真实密钥。
 
-当前已验证插件结构、Codex 原生识别和云端目录读取。配额查询默认跳过，超时不会阻塞连接检查或已授权的存储流程；工程上传／恢复尚未完成端到端验证。请按测试版使用，具体限制见 [VALIDATION.md](VALIDATION.md)。
+## 默认目录与跨设备继续
 
-## 从 GitHub 安装
+- Codex 新工程：`个人文件/codex/工程名/`。
+- WorkBuddy 新工程：`个人文件/workbuddy/工程名/`。
+- 文件保留原名及相对目录，不给源码文件加前缀。目录缺失时在首次保存中逐级创建。
+- 已绑定或用户明确指定的云端工程目录优先。WorkBuddy 可以继续同步 Codex 创建的同一工程，不再复制到 workbuddy 分区。
+- 换设备时可指定既有云端工程并下载到新本地目录，建立新的本地共同基线后继续同步。
 
-仓库：<https://github.com/bypassdesign-dev/babelbird-plugins>。发布包位于仓库的 Releases 页面。
+这是任务期间的自动同步。绑定会写入本地目标引用、基线和项目规则；宿主加载规则后，在后续任务开始前、每批修改后和结束前调用 Skill。插件不会在智能体关闭后常驻监控，也不会把远端目录挂载为本地磁盘。第一次启用需要确定工程并建立绑定；仅填写 API Key 代表连接已配置。
 
-Codex 用户在终端执行：
+## 获取 API Key
 
-```bash
-codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.2.1
-codex plugin add babelbird-cloud@babelbird-local
-```
+参照 [巴别鸟官方图文教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)；包内也有 [获取步骤](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/api-key.md)。
 
-首次使用发送：
+在“设置 > API秘钥”创建应用，选择访问范围，复制 APP 详情上方的 APIKey，并按读写用途配置文件权限。APP Key / APP Secret 不能替代 APIKey。默认保存目录必须在授权范围内，应用程序文件夹权限不会自动覆盖整个个人文件。
 
-> 使用 $babelbird-cloud:babelbird-setup 配置我的巴别鸟连接并执行只读检查。
-
-Claude Code 用户在客户端执行：
-
-```text
-/plugin marketplace add bypassdesign-dev/babelbird-plugins
-/plugin install babelbird-cloud@babelbird-local
-```
-
-以下章节说明凭据配置，以及从 ZIP 解压目录安装的方法。市场名称 `babelbird-local` 是稳定标识，通过 GitHub 安装时也保持一致。
+首次使用要求填写个人 API Key；已有凭据复用。公有云 MCP 地址固定为 `https://www.babel.cc/mcp`。配额查询默认跳过，连接通过目录读取验证。
 
 ## Codex 安装
 
-解压整个分发包，进入含本说明及 `.agents` 文件夹的 `babelbird-plugin` 目录。在终端执行：
-
 ```bash
-codex plugin marketplace add .
+codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.3.0
 codex plugin add babelbird-cloud@babelbird-local
 ```
 
-保持解压目录存在，方便本地市场读取与后续升级。以上命令需要支持 `codex plugin` 的版本。安装后重新打开会话并发送：
+也可解压完整插件分发包，在包含本 README 和 .agents 的目录执行 `codex plugin marketplace add .`，再添加插件。保留本地市场目录。需要支持 `codex plugin` 的客户端。
 
-> 使用 $babelbird-cloud:babelbird-setup 配置我的巴别鸟连接并执行只读检查。
-
-清单同时声明了自动设置 Skill，但本次验证的 Codex 版本没有返回该入口；请使用上面的明确调用方式。
-
-首次使用会要求填写个人 API Key。Codex 适配器通过环境变量 `BABELBIRD_API_KEY` 读取密钥，Skill 引导填写不等于桌面客户端自动拥有一个密码表单。可通过自己的凭据管理器注入启动环境，或使用下列临时会话方式验证。
-
-macOS / Linux 的 Bash 终端，逐行执行，提示时输入密钥：
+Codex 使用 `BABELBIRD_API_KEY` 环境变量引用。macOS / Linux 的 Bash 中可私密输入并启动：
 
 ```bash
 read -r -s -p '巴别鸟 API Key: ' BABELBIRD_API_KEY
@@ -62,47 +46,48 @@ Remove-Variable babelSecret
 codex
 ```
 
-这会给新启动的 Codex CLI 提供凭据，变量随终端会话结束而消失。要长期复用，请用个人凭据管理器及启动器注入同名变量；真实值不应写入工程、插件或共享脚本。已运行的 Codex 桌面应用不会继承之后设置的变量，应通过宿主支持的启动环境配置后重新启动，并用只读检查确认。现有独立 MCP 的凭据读取器不会自动绑定到本插件。
+临时变量不等于永久保存，已运行的桌面客户端不会继承后来设置的变量。长期使用请通过自己的凭据管理器向实际客户端启动环境注入；已有独立 MCP 凭据不会自动迁移到插件。清单声明了自动设置 Skill，但本次 Codex 返回 onboardingSkill 为 null，请显式发送：
+
+> 使用 $babelbird-cloud:babelbird-setup 配置巴别鸟，并为当前工程启用任务开始前、每批修改后自动同步。
+
+## WorkBuddy 安装与接入
+
+WorkBuddy 官方支持 [MCP + Skill 连接器及 API Key 表单](https://open.workbuddy.cn/docs/connector)。专用源码在 [workbuddy/babelbird-cloud](workbuddy/babelbird-cloud/README.md)，包含 connector-meta.json、mcp.json、token-schema.json、图标和两项 Skill，最低客户端版本声明为 4.24.0。
+
+连接器表单配置将 API Key 设为必填密码项，并提供官方获取教程链接。此包已提供，尚未提交 WorkBuddy 市场审核；GitHub 上的 Codex 安装命令不能直接用于 WorkBuddy。
+
+当前可按 [WorkBuddy 接入说明](workbuddy/babelbird-cloud/README.md) 添加自定义 MCP，并将两项 Skill 安装到工程的 `.codebuddy/skills/`。完整连接器包用于 WorkBuddy 开放平台导入／审核，不声称普通客户端支持直接安装此 ZIP。WorkBuddy 同步脚本需要可用的 Node.js 20+，与 Codex 使用相同的任务同步逻辑。
 
 ## Claude Code 安装
 
-在同一个分发包根目录启动 Claude Code，执行：
-
 ```text
-/plugin marketplace add .
+/plugin marketplace add bypassdesign-dev/babelbird-plugins
 /plugin install babelbird-cloud@babelbird-local
 ```
 
-需要支持插件 `userConfig` 的 Claude Code 版本。启用时会要求填写“巴别鸟 API Key”；该项必填且为敏感字段，由宿主保存。随后发送：
-
-> 使用 babelbird-cloud 插件的 babelbird-setup 检查连接，只执行只读测试。
-
-Claude Code 的适配配置已提供，本次没有运行该客户端进行实机安装验证。
+需要支持插件 userConfig 的版本。通过必填敏感项 api_key 填写密钥。此宿主没有预设默认分区，首次绑定时提供云端工程目录；之后复用绑定。未在该客户端实机验证安装。
 
 ## 使用
 
-连接验证通过后，可以提出：
+- “为当前工程启用巴别鸟自动同步。”
+- “将这个工程绑定到个人文件/codex/网站改版，先拉取更新，再继续修改。”
+- “从个人文件/workbuddy/市场资料下载到新的本地目录，后续保持任务前后同步。”
+- “检查工程同步状态，列出待上传、待下载和冲突文件。”
 
-- “把这个工程保存到巴别鸟的研发／演示项目目录，创建一个新快照。”
-- “从巴别鸟恢复刚才的工程快照到一个新文件夹，并校验内容。”
-- “只保存我指定的交付文件到巴别鸟。”
+绑定使用本地 `.babelbird-sync.json`，状态使用 `.babelbird-sync-state.json`；两者不上传且不包含密钥。设 autoSync 为 false 可暂停自动传输。绑定会保留并追加 AGENTS.md，WorkBuddy 另有项目规则文件。Node.js 脚本通过标准输入接收一次性传输凭据，不接收 API Key。
 
-已有独立版 Skill 或 MCP 时，先检查重复项；安装插件不会自动迁移旧连接的密钥。插件连接验证成功后，再按用户要求迁移旧配置。
+本地单侧修改上传，云端单侧修改下载；同时修改或没有共同基线的不同内容会保留双方并报告冲突。删除不自动传播。断网保留本地修改，恢复后重新比较；部分失败不声称整体成功。默认排除密钥、缓存、依赖和符号链接。
 
-## 内容与边界
+## 验证与限制
 
-`plugins/babelbird-cloud` 是实际插件根目录，两个宿主共享 `skills`。Codex 与 Claude Code 的清单分别引用自身的 MCP 配置，因此不会互相读取不兼容的认证字段。其他宿主可复用 Skill 内容，但需要按其规范接入 MCP。
+公有云已完成新增、更新、下载 SHA-256 回读，以及两份本地工程之间的跨宿主往返同步和冲突保留。10 项可执行测试通过，具体记录见 [VALIDATION.md](VALIDATION.md)。长批量直接 MCP 调用仍观察到 403，原因未确定，本版以测试版发布，遇此错误保留进度并报告待同步项。
 
-工程保存使用独立 ZIP 快照，包含 SHA-256 清单与恢复说明，默认排除密钥和缓存。插件不提供后台同步或云端运行环境。
+逐文件更新不是全工程原子提交；服务端尚未提供原子条件写入或跨设备锁，同一文件应在一端同步完成后再换端继续。自动触发由智能体和宿主项目规则执行；未加载规则、离线或未提供 Node.js 运行时时无法自动同步。WorkBuddy 的安装与表单未做 UI 实测。
 
-2026-10-22 的服务测试确认 `listFolder` 返回有效业务成功结果；`getUsageAndQuota` 在约 30 秒后结束响应流而没有业务结果。Skill 默认使用目录读取验证连接，不再等待配额查询；用户明确查询空间而遇到上述故障时，仅记录“配额未知，已跳过查询”，继续已授权的流程。401/403、目录读取失败、明确空间不足以及实际上传／下载错误仍正常处理。
+## 维护与分发
 
-当前工具说明已明确 `fileHash` 使用文件 MD5；实际 HTTP 上传方法、字段和完成响应仍待确认。目录读取通过不代表工程保存／恢复已实测成功。
+仓库：[bypassdesign-dev/babelbird-plugins](https://github.com/bypassdesign-dev/babelbird-plugins)。Releases 同时提供 Codex / Claude 插件包和 WorkBuddy 连接器包；压缩包仅用于分发安装，工程内容以原文件存储。
 
-验证范围和结果见 [VALIDATION.md](VALIDATION.md)。本包尚未发布到公共插件市场。
+修改共享 Skill 后同步 WorkBuddy 对应正文、引用文件和脚本；WorkBuddy 的 frontmatter 包含其专用中英文描述等字段。分发仅纳入正式文件，排除 .www.babel.cc、缓存和凭据。
 
-## 升级和维护
-
-修改 `plugins/babelbird-cloud` 内的源文件并更新两个插件清单及市场条目的版本号，再按宿主的市场更新流程升级。不要将用户凭据加入源包。分发时只包含正式文件，排除系统同步生成的 `.www.babel.cc` 标记、缓存和任何凭据文件。
-
-格式依据：[Codex 插件规范](https://developers.openai.com/plugins/build/plugins)、[Claude Code 插件规范](https://code.claude.com/docs/en/plugins-reference)。
+验证命令：`node --test tests/project-sync.test.mjs`。格式依据：[Codex 插件](https://developers.openai.com/plugins/build/plugins)、[Claude Code 插件](https://code.claude.com/docs/en/plugins-reference)、[WorkBuddy 连接器](https://open.workbuddy.cn/docs/connector)。
