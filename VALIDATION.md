@@ -1,5 +1,21 @@
 # 验证记录
 
+## 0.3.1 安装与密钥引导
+
+日期：2026-10-23。环境：macOS，Codex 0.163.0-alpha.10.2。本版修改安装说明、Skill 指令和插件元数据，同步脚本与测试代码未改动。
+
+- 原生 `plugin/read` 成功读取版本 0.3.1、两项 Skill、MCP 配置，以及 `onboardingSkill: babelbird-cloud:babelbird-setup`。与下方旧版客户端的结果不同，本次客户端已识别首次设置入口；这不等于验证了实际安装界面会自动弹窗。
+- 根据官方 MCP 文档和本机桌面应用的设置代码核对菜单及字段：MCP servers、Add server、Streamable HTTP、URL、Headers、Save、Restart。使用示例凭据的只读 CLI 配置解析确认 `http_headers.Authorization` 可接受，Bearer token env var 可以为空；没有读取或提交用户真实密钥进行此项测试。
+- CLI 接受插件单个 MCP 的 `enabled = false` 用户配置覆盖。未执行实际桌面保存、重启和重复入口关闭流程，不能据此声称 UI 端到端验证通过。
+- 独立只读场景复测覆盖六种情况：Codex 桌面缺少密钥、WorkBuddy 缺少密钥、无 GUI 的 Codex CLI、已有有效连接、仅下载稍后配置、配置已保存但宿主未加载。均能给出具体下一步，区分文件就位、凭据配置与连接验证，不擅自绑定或上传工程。
+- 复测发现的旧版 CLI 安装回退说明已修正：缺少插件命令不能回退到同样依赖插件命令的本地市场方式。没有对应桌面菜单时，仅使用 CLI 不代表完成桌面配置。
+- 两份首次设置 Skill 允许智能体按描述主动调用；README 指向 INSTALL，要求用户请求安装后继续配置。WorkBuddy 当前 GitHub 安装明确使用自定义连接器，不要求寻找尚未上架的 Token 表单。
+- 36 个正式文件的镜像、JSON／YAML、相对链接、共享 Skill 正文和密钥排除检查通过；Codex 两项 Skill 格式检查通过。
+
+本版验证了指令路径、配置解析和原生插件识别，未在干净客户端中重新执行完整 GUI 安装，也未在 WorkBuddy UI 中填写密钥。没有新增云端传输测试；同步能力与限制沿用下方 0.3.0 的实测记录。是否主动出现设置入口取决于宿主；没有弹窗时使用明确的菜单与逐项填写说明。
+
+## 0.3.0 同步能力验证
+
 日期：2026-10-23。版本：0.3.0。环境：macOS，Codex 0.162.0-alpha.17.2；本机 WorkBuddy 5.2.5 的连接器读取代码用于核对 Token 表单与变量替换格式。
 
 ## 真实服务
@@ -16,7 +32,7 @@
 
 - 10 项可执行测试全部通过，覆盖增量上传／下载、双端冲突、首次同名内容核对、删除不传播、跨宿主复用目标、排除凭据与链接、路径越界以及状态记录。内容哈希变化但版本元数据未变、跨设备大小写和 Unicode 路径冲突均有回归测试。
 - 独立代码审查发现的上述两个问题已修复并获复核通过。10 项 Skill 场景检查通过，包括首次密钥设置、默认目录、复用已有目录、只读配置、配额跳过和 WorkBuddy 规则。
-- Codex 原生 plugin/read 成功读取 0.3.0、两项 Skill 和 babelBird MCP。当前宿主仍返回 onboardingSkill: null，因此 README 提供显式首次设置入口。
+- Codex 原生 plugin/read 成功读取 0.3.0、两项 Skill 和 babelBird MCP。当时的 0.162.0-alpha.17.2 宿主返回 onboardingSkill: null，因此该版 README 提供显式首次设置入口。
 - 同步状态与绑定只保存在本地并排除上传；首次绑定追加项目规则，保留已有内容。
 - Codex / Claude 配置保留原认证引用；WorkBuddy 专用包使用 token 模式、必填 password 字段、官方教程链接和同名请求头占位符。
 - WorkBuddy 的技能正文、引用与脚本与共享版本同步，frontmatter 按其官方格式增加中英文描述、版本与作者。

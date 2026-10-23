@@ -4,7 +4,7 @@ description: Use when setting up BabelBird project sync, binding or restoring a 
 display_name: "巴别鸟工程同步"
 description_zh: "自动同步工程文件，绑定云端目录并跨设备、跨智能体继续工作。"
 description_en: "Sync project files and resume a cloud project across devices and agents."
-version: "0.3.0"
+version: "0.3.1"
 author: "bypassdesign-dev"
 ---
 
@@ -16,7 +16,7 @@ author: "bypassdesign-dev"
 
 首次使用必须先要求用户填写自己的巴别鸟 API Key。提示中提供 [官方获取教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)，具体步骤见 [获取 API Key](references/api-key.md)。这里需要 APP 详情上方的 APIKey，不是 APP Key 或 APP Secret。
 
-读取 [首次配置流程](references/setup.md#首次配置流程)，使用当前宿主的私密凭据入口。用户已提供或登记过凭据时直接复用，不重复索要；普通超时不等于密钥失效。只有明确凭据无效或用户更换账号／密钥时，才重新填写。真实密钥不得放进工程或分发包。
+读取 [首次配置流程](references/setup.md#首次配置流程) 和 [API Key 填写入口](references/credential-entry.md)，给出实际宿主的菜单、字段、填写内容与保存后的下一步，不能只提示“去私密入口填写”。安装后缺少凭据时主动进入首次设置引导。用户已提供或登记过凭据时直接复用，不重复索要；普通超时不等于密钥失效。只有明确凭据无效或用户更换账号／密钥时，才重新填写。真实密钥不得放进工程或分发包。
 
 ## 连接与能力
 

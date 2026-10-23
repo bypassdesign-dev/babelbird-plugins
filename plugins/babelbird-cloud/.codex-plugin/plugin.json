@@ -1,6 +1,6 @@
 {
   "name": "babelbird-cloud",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": {
     "name": "bypassdesign-dev"
   },
@@ -10,7 +10,7 @@
   "mcpServers": "./mcp.codex.json",
   "interface": {
     "displayName": "巴别鸟工程云存储",
-    "shortDescription": "配置个人密钥，将工程文件保存到巴别鸟",
+    "shortDescription": "安装后引导填写密钥，自动同步巴别鸟工程文件",
     "longDescription": "提供首次连接引导和工程文件保存、下载、校验、恢复流程。需要用户自己的巴别鸟 API Key；实际传输取决于服务端可用性与上传协议。",
     "category": "Productivity",
     "capabilities": [
@@ -18,7 +18,7 @@
       "Write"
     ],
     "defaultPrompt": [
-      "使用 $babelbird-cloud:babelbird-setup 配置我的巴别鸟连接并执行只读检查。",
+      "使用 $babelbird-cloud:babelbird-setup 继续首次设置，告诉我在当前客户端哪里填写 API Key，并完成只读连接检查。",
       "使用 $babelbird-cloud:babelbird-project-cloud 保存我指定的工程。"
     ]
   },

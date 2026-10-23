@@ -8,7 +8,7 @@
       "name": "babelbird-cloud",
       "source": "./plugins/babelbird-cloud",
       "description": "巴别鸟工程文件保存与恢复，首次使用填写个人 API Key",
-      "version": "0.3.0"
+      "version": "0.3.1"
     }
   ]
 }
