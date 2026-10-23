@@ -81,13 +81,13 @@ WorkBuddy 官方支持 [MCP + Skill 连接器及 API Key 表单](https://open.wo
 
 ## 验证与限制
 
-公有云已完成新增、更新、下载 SHA-256 回读，以及两份本地工程之间的跨宿主往返同步和冲突保留。10 项可执行测试通过，具体记录见 [VALIDATION.md](VALIDATION.md)。长批量直接 MCP 调用仍观察到 403，原因未确定，本版以测试版发布，遇此错误保留进度并报告待同步项。
+公有云已完成新增、更新、下载 SHA-256 回读，以及两份本地工程之间的跨宿主往返同步和冲突保留。本版 24 项可执行测试通过，包含原有 10 项同步回归；Codex 本地页完成了真实密钥填写、只读连接和重启后的 MCP 验证，具体记录见 [VALIDATION.md](VALIDATION.md)。长批量直接 MCP 调用仍观察到 403，原因未确定，本版以测试版发布，遇此错误保留进度并报告待同步项。
 
 逐文件更新不是全工程原子提交；服务端尚未提供原子条件写入或跨设备锁，同一文件应在一端同步完成后再换端继续。自动触发由智能体和宿主项目规则执行；未加载规则、离线或未提供 Node.js 运行时时无法自动同步。WorkBuddy 的安装与表单未做 UI 实测。
 
 ## 维护与分发
 
-仓库：[bypassdesign-dev/babelbird-plugins](https://github.com/bypassdesign-dev/babelbird-plugins)。Releases 同时提供 Codex / Claude 插件包和 WorkBuddy 连接器包；压缩包仅用于分发安装，工程内容以原文件存储。
+仓库：[bypassdesign-dev/babelbird-plugins](https://github.com/bypassdesign-dev/babelbird-plugins)。Releases 提供版本记录和源码；Codex 通过上面的仓库链接安装，无需手动下载压缩包。WorkBuddy 专用连接器源码保留在 `workbuddy/`。工程内容以原文件存储。
 
 修改共享工程同步 Skill 后同步 WorkBuddy 对应正文、引用文件和脚本；首次设置按宿主分别维护，Codex 本地页面不混入 WorkBuddy 包；WorkBuddy 的 frontmatter 包含其专用中英文描述等字段。分发仅纳入正式文件，排除 .www.babel.cc、缓存和凭据。
 
