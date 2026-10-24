@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, readFile, symlink, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, symlink, rm, chmod, stat } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 
-const { planSync, scanProject, bindProject, readBinding, recordVerified, readState, safePath, transferUrl } = await import('../plugins/babelbird-cloud/skills/babelbird-project-cloud/scripts/project-sync.mjs');
+const { planSync, scanProject, bindProject, readBinding, recordVerified, readState, safePath, transferUrl, run } = await import('../plugins/babelbird-cloud/skills/babelbird-project-cloud/scripts/project-sync.mjs');
   const remote = (fileId, version = 0) => ({ fileId, version, mtime: version + 1, size: 3 });
   const local = (path, sha256) => ({ path, sha256, md5: '0'.repeat(32), size: 3 });
   const sha = 'a'.repeat(64), changed = 'b'.repeat(64);
@@ -83,3 +85,70 @@ const { planSync, scanProject, bindProject, readBinding, recordVerified, readSta
       assert.throws(() => transferUrl('http://unverified.example/upload'), /HTTPS/);
     } finally { await rm(root, { recursive: true, force: true }); }
   });
+
+test('binding a Git subdirectory respects parent ignores and keeps tracked project config', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'babelbird-subproject-'));
+  const project = join(root, 'packages/app');
+  const git = args => {
+    const result = spawnSync('git', ['-C', root, ...args], { encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
+  };
+  try {
+    git(['init', '--quiet']);
+    await mkdir(project, { recursive: true });
+    await writeFile(join(root, '.gitignore'), 'private-settings.json\nignored/\n');
+    await writeFile(join(project, 'private-settings.json'), 'excluded fixture');
+    await mkdir(join(project, 'ignored'));
+    await writeFile(join(project, 'ignored/config.json'), 'excluded fixture');
+    await writeFile(join(project, '.mcp.json'), '{"fixture":true}');
+    await writeFile(join(project, 'tracked.json'), '{}');
+    git(['add', 'packages/app/tracked.json']);
+    await writeFile(join(root, '.gitignore'), 'private-settings.json\nignored/\ntracked.json\n');
+    const result = await scanProject(project);
+    assert.deepEqual(result.files.map(file => file.path), ['.mcp.json', 'tracked.json']);
+    assert.ok(result.excluded.some(file => file.path === 'private-settings.json' && file.reason === 'git-ignored'));
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+for (const mode of [0o755, 0o700, 0o600, 0o644]) {
+  test(`cloud updates preserve existing ${mode.toString(8)} permissions`, { skip: process.platform === 'win32' }, async t => {
+    const root = await mkdtemp(join(tmpdir(), 'babelbird-mode-'));
+    t.mock.method(globalThis, 'fetch', async () => new Response('updated'));
+    try {
+      const file = join(root, 'file');
+      await writeFile(file, 'original');
+      await chmod(file, mode);
+      await run({ action: 'download', root, path: 'file', url: 'https://transfer.example/file', mode: '0755', expectedLocalSha256: createHash('sha256').update('original').digest('hex') });
+      assert.equal(await readFile(file, 'utf8'), 'updated');
+      assert.equal((await stat(file)).mode & 0o777, mode);
+    } finally { await rm(root, { recursive: true, force: true }); }
+  });
+}
+
+test('new downloads can restore a known mode and reject special permission bits', { skip: process.platform === 'win32' }, async t => {
+  const root = await mkdtemp(join(tmpdir(), 'babelbird-new-mode-'));
+  t.mock.method(globalThis, 'fetch', async () => new Response('downloaded'));
+  try {
+    for (const [path, mode, expected] of [['run.sh', '0755', 0o755], ['private.json', '0600', 0o600]]) {
+      await run({ action: 'download', root, path, url: 'https://transfer.example/file', mode });
+      assert.equal((await stat(join(root, path))).mode & 0o777, expected);
+    }
+    for (const mode of ['4755', '755x', 755, null]) {
+      await assert.rejects(run({ action: 'download', root, path: 'invalid', url: 'https://transfer.example/file', mode }), /mode/i);
+      assert.equal(existsSync(join(root, 'invalid')), false);
+    }
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test('a download never overwrites a changed local file or changes its permissions', { skip: process.platform === 'win32' }, async t => {
+  const root = await mkdtemp(join(tmpdir(), 'babelbird-download-conflict-'));
+  t.mock.method(globalThis, 'fetch', async () => new Response('cloud'));
+  try {
+    const file = join(root, 'run.sh');
+    await writeFile(file, 'local changes');
+    await chmod(file, 0o700);
+    await assert.rejects(run({ action: 'download', root, path: 'run.sh', url: 'https://transfer.example/file', expectedLocalSha256: '0'.repeat(64) }), /changed/);
+    assert.equal(await readFile(file, 'utf8'), 'local changes');
+    assert.equal((await stat(file)).mode & 0o777, 0o700);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});

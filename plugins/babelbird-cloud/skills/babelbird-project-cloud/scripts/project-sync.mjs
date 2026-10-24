@@ -1,4 +1,4 @@
-import { readFile, writeFile, readdir, lstat, mkdir, realpath, rename, unlink, link } from 'node:fs/promises';
+import { readFile, writeFile, readdir, lstat, mkdir, realpath, rename, unlink, link, chmod } from 'node:fs/promises';
 import { createHash, randomUUID } from 'node:crypto';
 import { resolve, join, dirname, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 const BINDING = '.babelbird-sync.json';
 const STATE = '.babelbird-sync-state.json';
 const BLOCK = '<!-- babelbird-task-sync -->';
-const RULE = `${BLOCK}\nThis project uses the babelbird-project-cloud Skill for task-based cloud synchronization. Read .babelbird-sync.json when starting work. If autoSync is enabled, use the installed Skill to pull non-conflicting remote changes before editing and upload local changes after each completed batch of edits and check again before finishing the task. Reuse the bound cloud folder across devices and agent platforms. Never upload credentials, propagate deletions, overwrite conflicts, or claim success without verification. If the plugin or network is unavailable, preserve local work and report pending synchronization.\n<!-- /babelbird-task-sync -->\n`;
+const RULE = `${BLOCK}\nThis project uses the babelbird-project-cloud Skill for task-based cloud synchronization. Read .babelbird-sync.json when starting work. If autoSync is enabled, use the installed Skill to pull non-conflicting remote changes before editing and upload local changes after each completed batch of edits and check again before finishing the task. Reuse the bound cloud folder across devices and agent platforms. Respect project-file exclusions and keep host authentication outside the project. Never propagate deletions, overwrite conflicts, or claim success without verification. If the plugin or network is unavailable, preserve local work and report pending synchronization.\n<!-- /babelbird-task-sync -->\n`;
 const SKIP_DIRS = new Set(['.git', '.svn', '.hg', 'node_modules', '__pycache__', '.venv', 'venv', '.cache', 'dist', 'build', 'secrets', '.ssh', '.aws', '.codex', '.workbuddy']);
 const SKIP_FILES = new Set([BINDING, STATE, '.DS_Store', '.www.babel.cc', 'credentials.json', 'id_rsa', 'id_ed25519', '.npmrc', '.pypirc', '.netrc']);
 const digest = (bytes, algorithm = 'sha256') => createHash(algorithm).update(bytes).digest('hex');
@@ -82,8 +82,8 @@ export async function scanProject(root) {
   const base = await realpath(root), files = [], excluded = [];
   const gitRoot = spawnSync('git', ['-C', base, 'rev-parse', '--show-toplevel'], { encoding: 'utf8' });
   let allowed;
-  if (gitRoot.status === 0 && resolve(gitRoot.stdout.trim()) === base) {
-    const listed = spawnSync('git', ['-C', base, 'ls-files', '--cached', '--others', '--exclude-standard', '-z'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+  if (gitRoot.status === 0) {
+    const listed = spawnSync('git', ['-C', base, 'ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', '.'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
     if (listed.status !== 0) throw new Error('Could not enumerate Git project files');
     allowed = new Set(listed.stdout.split('\0').filter(Boolean));
   }
@@ -208,6 +208,7 @@ async function upload(input) {
 }
 
 async function download(input) {
+  if (input.mode !== undefined && (typeof input.mode !== 'string' || !/^0?[0-7]{3}$/.test(input.mode))) throw new Error('Download mode must be an octal permission string such as 0755');
   const response = await fetch(transferUrl(input.url), { signal: AbortSignal.timeout(120000), redirect: 'error' });
   if (!response.ok) throw new Error(`Download HTTP ${response.status}`);
   const bytes = Buffer.from(await response.arrayBuffer()), sha256 = digest(bytes);
@@ -223,12 +224,14 @@ async function download(input) {
   await safePath(input.root, input.path);
   const temporary = `${target}.${randomUUID()}.tmp`;
   try {
-    await writeFile(temporary, bytes, { flag: 'wx' });
+    await writeFile(temporary, bytes, { flag: 'wx', mode: 0o600 });
     await safePath(input.root, input.path);
     if (previous) {
       if (digest(await readFile(target)) !== input.expectedLocalSha256) throw new Error('Local file changed during download');
+      if (process.platform !== 'win32') await chmod(temporary, (await lstat(target)).mode & 0o777);
       await rename(temporary, target);
     } else {
+      if (process.platform !== 'win32') await chmod(temporary, input.mode === undefined ? 0o666 & ~process.umask() : Number.parseInt(input.mode, 8));
       await link(temporary, target);
     }
   }

@@ -29,7 +29,7 @@ WorkBuddy 的 host 为 `workbuddy`。脚本创建本地 `.babelbird-sync.json` �
 {"action":"plan","root":"/absolute/local/project","remoteComplete":true,"remoteFiles":[{"path":"src/app.js","fileId":"123","version":0,"mtime":1792723461,"size":3}]}
 ```
 
-脚本自动扫描本地、排除凭据／缓存／链接，在完整 Git 工程根目录遵循 Git 的文件忽略结果。计划中的 `upload`、`download`、`inspect`、`record`、`skip`、`conflict` 分别按下节处理。排除项如包含用户明确要求的文件，先处理该差异，不能静默遗漏或擅自上传凭据。
+脚本自动扫描本地、排除凭据／缓存／链接，在 Git 工程根目录和工程子目录中均遵循 Git 的文件忽略结果。计划中的 `upload`、`download`、`inspect`、`record`、`skip`、`conflict` 分别按下节处理。排除项如包含用户明确要求的文件，先处理该差异，不能静默遗漏或擅自上传凭据。
 
 不要并行同步同一个本地绑定。只有已验证完成的文件才能推进基线；失败和冲突保持旧基线，下次继续比较。无需重传未改动文件。
 
@@ -56,6 +56,8 @@ WorkBuddy 的 host 为 `workbuddy`。脚本创建本地 `.babelbird-sync.json` �
 ```
 
 本地不存在时不传 expectedLocalSha256；已有文件只有其内容仍与计划一致才替换。首次下载默认选择空本地目录。脚本拒绝越界路径、符号链接及未经计划的覆盖。
+
+macOS/Linux 更新已有文件时保留本地普通权限位，例如 0755、0700、0600、0644；先在临时文件上设置权限，再替换目标。不要将整个项目递归改成 755。首次下载没有本地原权限时，可在用户明确指定或已有可信项目权限记录的情况下传 `"mode":"0755"`；普通新文件按本机 umask 创建。不得仅凭扩展名猜测权限。当前云端协议不保存 POSIX 权限，跨设备首次下载无法自动恢复未知的执行位；Windows 的 ACL 不在此接口中同步。
 
 `inspect` 或上传后的回读验证使用同一 action，加 `inspectOnly: true`，只返回 SHA-256 和大小，不落盘。将得到的 SHA-256 放入对应 remoteFiles 条目的 sha256 后重新计划；相同内容可建立基线，不同内容保持冲突。上传回读时另传 expectedSha256，校验失败不会写基线。
 
