@@ -2,7 +2,7 @@
 
 [English](README.en.md) · [支持的智能体](docs/SUPPORTED_AGENTS.md) · [更新记录](CHANGELOG.md)
 
-配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。
+配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟网盘，切换设备或智能体产品后也能同步回来。
 
 英文名称：**BabelBird Project Cloud Sync**。0.5.0 是 GitHub 测试版，安装适配支持 Codex、WorkBuddy、CodeBuddy CLI、Claude Code、Cursor 和 Gemini CLI；适配支持不等于每款客户端均已完成实机端到端验证，实际范围见 [验证记录](VALIDATION.md)。
 
