@@ -11,7 +11,7 @@
   "interface": {
     "displayName": "项目云端同步巴别鸟插件",
     "shortDescription": "工程文件跨设备、跨智能体同步",
-    "longDescription": "配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。\n\nBabelBird Project Cloud Sync: After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms.\n\n同步在工程绑定后的智能体任务期间执行，保留原始文件和目录，不压缩工程。Codex 安装后打开本地 API Key 页面；WorkBuddy 使用独立连接器，实机安装验证仍待完成。需要 Node.js 20+、可用的网络和个人 API Key。\nSync runs during agent tasks after a project is bound. Files keep their original structure without ZIP archives. Codex opens a local API Key form; WorkBuddy uses a separate connector whose installation is not yet validated in the app. Node.js 20+, network access and a personal API Key are required.",
+    "longDescription": "配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。\n\nBabelBird Project Cloud Sync: After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms.\n\n同步在工程绑定后的智能体任务期间执行，保留原始文件和目录，不压缩工程。GitHub 安装后为六种已适配智能体打开中英文 API Key 页面；WorkBuddy 仍需应用内授权，其完整对话验证待完成。需要 Node.js 20+、可用的网络和个人 API Key。\nSync runs during agent tasks after a project is bound. Files keep their original structure without ZIP archives. The GitHub installer opens a bilingual local API Key form for six host adapters. WorkBuddy requires native approval; full in-app agent testing remains pending. Node.js 20+, network access and a personal API Key are required.",
     "developerName": "bypassdesign-dev",
     "websiteURL": "https://github.com/bypassdesign-dev/babelbird-plugins",
     "supportURL": "https://github.com/bypassdesign-dev/babelbird-plugins/issues",
