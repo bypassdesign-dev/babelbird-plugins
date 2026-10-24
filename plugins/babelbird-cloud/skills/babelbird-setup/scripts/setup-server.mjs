@@ -7,6 +7,7 @@ const assets = new Map([
   ['', ['setup.html', 'text/html; charset=utf-8']],
   ['setup.css', ['setup.css', 'text/css; charset=utf-8']],
   ['setup.js', ['setup.js', 'text/javascript; charset=utf-8']],
+  ['messages.mjs', ['messages.mjs', 'text/javascript; charset=utf-8']],
 ]);
 
 async function bodyJson(request) {
@@ -29,7 +30,7 @@ async function bodyJson(request) {
   });
 }
 
-export async function startSetup({ checkConnection, saveConnection, onComplete = async () => {}, ttlMs = 600000 }) {
+export async function startSetup({ checkConnection, saveConnection, onComplete = async () => {}, ttlMs = 600000, host = 'codex', hostName = 'Codex' }) {
   const prefix = `/${randomBytes(24).toString('hex')}/`;
   const expiresAt = new Date(Date.now() + ttlMs).toISOString();
   let origin, state = 'waiting', timer, successTimer;
@@ -44,7 +45,7 @@ export async function startSetup({ checkConnection, saveConnection, onComplete =
     if (request.headers.host !== new URL(origin).host) { json(403, { error: '无法访问此设置页。' }); return; }
     const route = request.url?.startsWith(prefix) ? request.url.slice(prefix.length) : null;
     if (route === null) { json(404, { error: '设置入口不存在，请使用智能体提供的链接。' }); return; }
-    if (request.method === 'GET' && route === 'status') { json(200, { status: state, expiresAt }); return; }
+    if (request.method === 'GET' && route === 'status') { json(200, { status: state, expiresAt, host, hostName }); return; }
     if (request.method === 'GET' && assets.has(route)) {
       try {
         const [name, type] = assets.get(route);
@@ -57,7 +58,7 @@ export async function startSetup({ checkConnection, saveConnection, onComplete =
     if (request.headers.origin !== origin || request.headers['sec-fetch-site'] === 'cross-site' || request.headers['content-type']?.split(';')[0] !== 'application/json') {
       json(403, { error: '请在本机设置页中提交。' }); return;
     }
-    if (state !== 'waiting') { json(409, { error: ['connected', 'saved_status_error'].includes(state) ? '连接已保存，可以返回 Codex。' : '正在连接，请稍候。' }); return; }
+    if (state !== 'waiting') { json(409, { code: 'busy', error: ['connected', 'saved_status_error'].includes(state) ? '连接已保存，可以返回智能体。' : '正在连接，请稍候。' }); return; }
     state = 'receiving';
     let saved = false;
     try {
@@ -72,7 +73,7 @@ export async function startSetup({ checkConnection, saveConnection, onComplete =
       state = 'saving';
       const connection = await saveConnection(key);
       saved = true;
-      const result = { status: 'connected', serverName: connection.serverName, reused: connection.reused, checkedAt: new Date().toISOString() };
+      const result = { status: 'connected', host, hostName, serverName: connection.serverName, reused: connection.reused, checkedAt: new Date().toISOString() };
       await onComplete(result);
       state = 'connected';
       clearTimeout(timer);
@@ -81,7 +82,7 @@ export async function startSetup({ checkConnection, saveConnection, onComplete =
     } catch (error) {
       if (state !== 'expired') state = saved ? 'saved_status_error' : 'waiting';
       if (saved) successTimer = setTimeout(() => { void close(); }, 1500);
-      const safe = saved ? new SetupError('saved_status_error', '连接已通过，密钥也已保存，但无法记录安装进度。请回到 Codex 检查连接，无需再次填写。') : error instanceof SetupError ? error : new SetupError('connection', '连接未完成，请稍后重试。');
+      const safe = saved ? new SetupError('saved_status_error', '连接已通过，密钥也已保存，但无法记录安装进度。请回到智能体检查连接，无需再次填写。') : error instanceof SetupError ? error : new SetupError('connection', '连接未完成，请稍后重试。');
       if (!response.destroyed) json(safe.code === 'too_large' ? 413 : safe.code === 'invalid_key' ? 400 : 422, { error: safe.message, code: safe.code, ...(saved ? { saved: true } : {}) });
     }
   });

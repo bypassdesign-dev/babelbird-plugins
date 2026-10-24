@@ -3,30 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="填写一次 API Key，连接巴别鸟与 Codex。">
+  <meta name="description" content="填写一次 API Key，连接巴别鸟与智能体。">
   <meta name="robots" content="noindex, nofollow">
   <title>连接巴别鸟</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="setup.css">
-  <script src="setup.js" defer></script>
+  <script src="setup.js" type="module"></script>
 </head>
 <body>
   <main class="panel">
-    <p class="brand">巴别鸟 · Codex</p>
-    <h1>连接巴别鸟</h1>
-    <p class="intro">填写一次 API Key，其他设置交给我们。</p>
+    <div class="topline"><p class="brand" id="brand">巴别鸟</p><button id="language" type="button" class="language" aria-label="Switch language / 切换语言">English</button></div>
+    <h1 data-i18n="title">连接巴别鸟</h1>
+    <p class="intro" data-i18n="intro">填写一次 API Key，其他设置交给我们。</p>
     <form id="connect-form">
-      <label for="api-key">巴别鸟 API Key</label>
+      <label for="api-key" data-i18n="label">巴别鸟 API Key</label>
       <input id="api-key" name="apiKey" type="password" placeholder="在这里粘贴 API Key" required maxlength="4096" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="privacy">
-      <p id="privacy" class="hint">密钥保存在这台电脑，不会发到聊天中。</p>
+      <p id="privacy" class="hint" data-i18n="privacy">密钥保存在这台电脑，不会发到聊天中。</p>
       <button type="submit" id="submit">保存并连接</button>
     </form>
     <div id="result" role="status" aria-live="polite" tabindex="-1" hidden></div>
     <div id="acquire" class="acquire">
-      <p>还没有密钥？<a href="https://www.babel.cc/" target="_blank" rel="noopener noreferrer">打开巴别鸟获取</a></p>
-      <p class="hint">在「设置 → API秘钥」创建密钥，复制 APIKey 后回到这里。</p>
+      <p><span data-i18n="acquire">还没有密钥？</span> <a href="https://www.babel.cc/" target="_blank" rel="noopener noreferrer" data-i18n="acquireLink">打开巴别鸟获取</a></p>
+      <p class="hint" data-i18n="acquireHint">在「设置 → API秘钥」创建密钥，复制 APIKey 后回到这里。</p>
+      <a class="hint" href="https://www.babel.cc/public/babelwiki/zh/mcp-integration.html" target="_blank" rel="noopener noreferrer" data-i18n="guide">查看获取说明</a>
     </div>
-    <p class="footnote">这是本机设置页，10 分钟内有效。</p>
+    <p class="footnote" data-i18n="footnote">这是本机设置页，10 分钟内有效。</p>
   </main>
 </body>
 </html>

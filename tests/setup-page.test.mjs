@@ -3,6 +3,25 @@ import assert from 'node:assert/strict';
 import { request } from 'node:http';
 import { startSetup } from '../plugins/babelbird-cloud/skills/babelbird-setup/scripts/setup-server.mjs';
 import { SetupError } from '../plugins/babelbird-cloud/skills/babelbird-setup/scripts/mcp-check.mjs';
+import { messages, languageFor } from '../plugins/babelbird-cloud/skills/babelbird-setup/assets/messages.mjs';
+
+test('both languages cover all form and error states', () => {
+  assert.deepEqual(Object.keys(messages.zh), Object.keys(messages.en));
+  assert.deepEqual(Object.keys(messages.zh.errors), Object.keys(messages.en.errors));
+  assert.equal(languageFor('zh-TW'), 'zh');
+  assert.equal(languageFor('en-US'), 'en');
+  assert.equal(languageFor('fr'), 'en');
+});
+
+test('host identity is safe metadata and returned with a verified result', async () => {
+  const app = await setup({ host: 'workbuddy', hostName: 'WorkBuddy' });
+  try {
+    assert.equal((await (await fetch(`${app.url}status`)).json()).hostName, 'WorkBuddy');
+    const result = await (await submit(app, { apiKey: 'fake' })).json();
+    assert.equal(result.host, 'workbuddy');
+    assert.equal(result.status, 'connected');
+  } finally { await app.close(); }
+});
 
 async function setup(options = {}) {
   return startSetup({ checkConnection: async () => ({ directoryRead: true, listRead: true }), saveConnection: async () => ({ serverName: 'test', reused: false }), ...options });

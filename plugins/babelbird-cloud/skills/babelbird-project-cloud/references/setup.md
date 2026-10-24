@@ -1,37 +1,25 @@
-# 插件连接与首次配置
+# 连接与首次配置
 
-## 使用条件
-
-插件已经包含工程存储 Skill、首次设置 Skill 和巴别鸟 MCP 配置。宿主还需具备本地文件读写与文件网络传输能力。MCP 服务地址为 `https://www.babel.cc/mcp`，逻辑服务名为 `babelBird`；宿主可能添加插件前缀。
-
-Codex 读取 `.codex-plugin/plugin.json` 和 `mcp.codex.json`；Claude Code 读取 `.claude-plugin/plugin.json` 和 `mcp.claude.json`。WorkBuddy 使用独立连接器包的 `connector-meta.json`、`mcp.json` 与 `token-schema.json`，不读取 Codex／Claude 的插件清单。插件版 Skill 不重复声明 MCP 依赖。
+GitHub 默认安装两项自包含的用户级 Skills 并配置 MCP，不注册原生插件菜单。支持 Codex、WorkBuddy、CodeBuddy CLI、Claude Code、Cursor、Gemini CLI。需要 Node.js 20+、本地文件读写和网络传输能力。公有云 MCP 地址固定为 `https://www.babel.cc/mcp`，实际连接名可能为 `babelBirdPersonal` 或宿主已有名称。
 
 ## 首次配置流程
 
-**Codex 0.4.1 默认先执行本地设置页：**安装后读取 `babelbird-setup` Skill，运行 `node scripts/setup-codex.mjs --start`，让用户只粘贴 API Key。助手自动检查并保存，智能体通过 `--wait` 等待完成；宿主未加载连接时提示重启一次。下面涉及 MCP 菜单和环境变量的步骤只作备用方式，不能取代本地页。WorkBuddy 和 Claude Code 继续使用各自的配置入口。
+1. 安装请求包含首次连接；只下载、离线或稍后配置除外。先检查当前加载的已有 MCP，验证有效后复用，不重复索要 Key。缺少凭据时执行相邻的 `babelbird-setup` Skill，运行 `node scripts/setup-host.mjs --host <id> --start`；GitHub 安装器已启动时使用返回的 URL，不重复启动。
+2. 默认自动打开同机中英文单密码框页，同时在聊天中提供返回的完整可点击链接。用户只需粘贴 Key、保存；不要把 Key 发到聊天。智能体用同一脚本 `--host <id> --wait` 自动等待，每次最多 25 秒，直至成功、取消、过期或助手退出，无需额外回复“已填写”。手工配置只用于 [本地页不可用的备用情况](credential-entry.md)。
+3. 页面先用 `getFileInfoByPath` 读取 `/个人文件`，再用真实目录 ID 调用 `listFolder`，`pageIndex: 0, pageSize: 1`。业务和 MCP 状态均成功才保存用户私有配置。不要用协议根目录 `0` 代替个人文件，也不以 HTTP 200 或工具列表代替成功检查。
+4. 分别核对“页面已检查并保存”与“当前宿主已加载 MCP”。后者需要实际工具调用；新连接未加载时提示重启／重新打开会话，重启后直接复用凭据。WorkBuddy 第三方 MCP 权限由用户在应用内批准，不能自动批准。错误和未完成项如实报告。
+5. 保留其他账号、连接、启用状态与设置。密钥仅存用户私有配置，不进入项目、分发包或公开日志；不打印鉴权头。相同配置复用，不因为环境变量在助手进程不可见就删除旧连接。
+6. 默认跳过 `getUsageAndQuota`。目录读取超时最多重试一次，401/403、权限失败、明确空间不足和真实传输失败仍需处理。配额未知不阻塞已授权存储，也不表示 Key 无效。
+7. 只连接时不创建云端目录或上传。用户要求同步且工程明确时进入项目同步流程，新工程默认 `个人文件/<host>/工程名/`，host 为 `codex`、`workbuddy`、`codebuddy`、`claude`、`cursor`、`gemini`；已绑定或指定的目录优先。任务前、每批修改后及结束前同步，跨设备继续同一目录。
 
-1. 用户要求安装本插件时，在文件安装完成后主动继续首次设置。检查当前用户已有连接与凭据引用，有效则复用。Codex 缺少凭据时执行上面的本地设置页流程。其他宿主或确实无法运行本地页时，按 [具体填写入口](credential-entry.md) 给出菜单、字段和下一步。需要获取密钥时使用 [官方 API Key 教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html) 和 [获取步骤](api-key.md)，不能把教程代替 Codex 填写页面。
-2. Codex 桌面可以在“设置 > MCP 服务器”建立用户级个人连接，通过 Headers 的 Authorization 填入 Bearer 加空格和自己的 APIKey；Bearer token env var 留空。保留插件 Skill、已有连接及其启用状态。不能因新增个人连接就关闭旧 MCP，旧连接可能属于另一个账号。Codex CLI 可保留内置 MCP 的 BABELBIRD_API_KEY 环境变量，使用文档中的隐藏输入命令。WorkBuddy 当前 GitHub 安装使用自定义远程 MCP 的 Authorization 请求头；只有实际出现完整连接器的 Token 表单时，才在必填密码项 BABELBIRD_API_KEY 填纯 APIKey。Claude Code 使用插件敏感配置项 api_key。填写步骤见上面的具体入口文档，不需要用户掌握环境变量知识。
-3. Codex 的环境变量必须存在于实际运行客户端的进程环境。已启动桌面应用不会自动取得子终端的新变量。终端会话变量并非永久保存；需要跨次启动复用时，将凭据保存到用户私有凭据管理器，并通过启动器注入。已登记的凭据不应反复索要；先解决加载问题。不要暗中改变系统全局环境或将明文写入共享启动脚本。
-4. 默认引导用户在客户端填写，不要求发送密钥到聊天。用户已经主动提供 API Key 时，视为已填写，可在其授权的用户私有配置区完成接入，不回显、不写入项目、分发包、公开日志或命令历史。个人 MCP 配置包含凭据时限制为当前用户可读。不要把插件 MCP 的静态配置改成硬编码鉴权头，也不要覆盖整个用户配置。没有可用凭据时等待填写，不发送未认证业务调用。
-5. 使用 `getFileInfoByPath` 定位用户指定目录或默认 `/个人文件`，确认业务成功与目录类型，再将真实目录 ID 传给 `listFolder`，使用 `pageIndex: 0, pageSize: 1`。不要将协议根目录 `0` 当作个人文件。核对 MCP `isError` 及业务状态，有效成功响应（包括空目录）才算只读连接验证通过。分别记录凭据已保存／可读取、目录读取已验证。目录读取超时或断连最多重试一次，仍失败则保留错误并报告“目录读取未验证”。401/403 按实际响应处理；不能据一般传输故障断定密钥无效。
-6. 默认跳过 `getUsageAndQuota`。仅在用户明确要求查询空间时调用；配额查询超时、`Transport closed` 或 SSE 流结束但无对应业务结果时，记录“配额未知，已跳过查询”，不重试、不阻塞设置和已授权的存储流程。此例外不适用于鉴权失败、目录读取失败、明确空间不足或真实上传／下载错误。初始化成功、工具列表可见和 HTTP 200 都不能替代成功的目录读取。
-7. 连接通过后按用户实际的保存／恢复请求执行。保存默认采用 Codex 的 `/个人文件/codex/<工程名>/` 或 WorkBuddy 的 `/个人文件/workbuddy/<工程名>/`，用户指定目录优先；当前工程和宿主已明确时不再追问目标。首次设置本身不授权上传、创建目录或覆盖文件。
+## 宿主配置与其他分发方式
 
-## 已有连接与私有化部署
+默认用户级配置：Codex `~/.codex/config.toml`；WorkBuddy `~/.workbuddy/mcp.json`；CodeBuddy CLI 按顺序选首个现存的 `~/.codebuddy/.mcp.json`、`~/.codebuddy/mcp.json`、`~/.codebuddy.json`，全不存在时创建首项；Claude Code `~/.claude.json`；Cursor `~/.cursor/mcp.json`；Gemini CLI `~/.gemini/settings.json`。用户 Skills 分别在对应 `~/.<host>/skills` 中。环境变量可覆盖部分路径，以助手解析结果为准。WorkBuddy 不写 `~/.workbuddy/.mcp.json`。
 
-已有独立 Skill 或 MCP 连接时，避免重复安装同一 Skill 和重复连接。用户级个人 MCP 是桌面填写密钥的一种支持方式，验证后保留 Skill、旧连接、启用状态和其他配置。仅在用户明确要求且已确认属于同一账号时处理重复连接。首次设置不能默认删除旧连接或把凭据放到项目中。
+原生 Codex / Claude Code 插件及 WorkBuddy 连接器源码仍保留。只有用户选择该分发路线、且宿主实际提供相应凭据表单时才使用它；不要混淆用户级安装与原生插件菜单注册。
 
-企业私有化部署需先取得管理员提供的 MCP 地址，再更新实际使用的宿主适配配置中的 URL。更新安装前的源包并重新安装，不直接修改插件缓存。仅向用户确认的服务地址发送凭据。
+已有同名 Skill 无安装回执或存在本地修改时，安装器拒绝覆盖，由智能体保留并比较处理，不丢弃用户修改。私有化部署需要管理员提供并确认 MCP 地址，不能将其凭据送往公有云。
 
-## 只读检查之后
+## 后续传输
 
-工具参数和上传限制见 [MCP 接口](mcp-tools.md)。首次传输验证只使用用户明确授权的文件，完成上传、列表核对、下载回读和 SHA-256 比较。公有云实际上传协议已验证；其他部署按返回合同核对，不能猜测字段或把获取上传 URL 当成上传成功。启用工程自动同步后按 [同步执行](sync.md) 建立绑定和共同基线。
-
-## 资料
-
-- [巴别鸟 MCP 文档](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)
-- [Codex 插件格式](https://developers.openai.com/plugins/build/plugins)
-- [Claude Code 插件及敏感配置](https://code.claude.com/docs/en/plugins-reference)
-
-- [WorkBuddy 连接器与 Token 表单](https://open.workbuddy.cn/docs/connector)
+读取 [MCP 接口](mcp-tools.md) 与 [同步执行](sync.md)。只有实际传输并回读校验才能声称内容已同步，配置成功不能替代上传完成。保持原文件与目录，不打包 ZIP。自动执行依赖宿主加载项目规则，不提供后台守护进程或挂载盘。

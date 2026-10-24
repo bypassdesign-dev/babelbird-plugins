@@ -1,0 +1,43 @@
+export const messages = {
+  zh: {
+    title: '连接巴别鸟', brand: '巴别鸟', intro: '填写一次 API Key，其他设置交给我们。', label: '巴别鸟 API Key',
+    placeholder: '在这里粘贴 API Key', privacy: '密钥保存在这台电脑，不会发到聊天中。', submit: '保存并连接', connecting: '正在连接…',
+    acquire: '还没有密钥？', acquireLink: '打开巴别鸟获取', acquireHint: '在「设置 → API秘钥」创建密钥，复制 APIKey 后回到这里。',
+    guide: '查看获取说明', footnote: '这是本机设置页，10 分钟内有效。', empty: '请先粘贴 API Key。',
+    checking: '正在检查连接并保存设置，请稍候。',
+    success: '已连接巴别鸟。密钥已保存，个人文件读取检查通过。',
+    next: '可以关闭此页，回到 {host} 继续。智能体会检查是否需要重新打开会话来加载连接。',
+    workbuddyNext: '请重启 WorkBuddy，并在其 MCP 连接界面确认允许巴别鸟连接，然后继续对话。无需再次填写密钥。',
+    closed: '设置页已关闭或连接中断。请回到 {host}，让智能体重新打开填写页面。',
+    expired: '设置页已过期。请回到 {host}，让智能体重新打开填写页面。',
+    errors: {
+      invalid_key: '请粘贴完整的 API Key，不要添加 Bearer 或其他文字。', too_large: '输入内容过长，请只粘贴 API Key。',
+      unauthorized: 'API Key 无效或已过期，请重新复制后再试。', permission: '无法读取个人文件，请检查密钥的访问范围和文件读取权限。',
+      timeout: '连接超时，密钥尚未保存。请检查网络后重试。', connection: '暂时无法连接巴别鸟，请检查网络后重试。',
+      config: '连接检查通过，但本机配置无法保存。请回到智能体检查配置格式和文件权限，然后重试。',
+      saved_status_error: '连接已通过，密钥已保存，但无法记录进度。请回到智能体检查连接，无需再次填写。',
+      busy: '正在连接或连接已保存，请回到智能体检查状态。', expired: '设置页已过期，请让智能体重新打开。',
+    },
+  },
+  en: {
+    title: 'Connect BabelBird', brand: 'BabelBird', intro: 'Enter your API Key. We’ll handle the rest.', label: 'BabelBird API Key',
+    placeholder: 'Paste your API Key here', privacy: 'Your key stays in this computer’s settings, outside the chat.', submit: 'Save and connect', connecting: 'Connecting…',
+    acquire: 'Need an API Key?', acquireLink: 'Open BabelBird', acquireHint: 'In Settings → API Keys, create a key. Copy APIKey and return here.',
+    guide: 'How to get a key', footnote: 'Local setup page. Expires after 10 minutes.', empty: 'Paste your API Key first.',
+    checking: 'Checking your connection and saving your settings…',
+    success: 'Connected to BabelBird. Your key is saved and the personal-folder read check passed.',
+    next: 'You can close this page and return to {host}. Your agent will check whether a new session is needed to load the connection.',
+    workbuddyNext: 'Restart WorkBuddy and approve the BabelBird server in its MCP connection screen, then continue your conversation. You do not need to enter the key again.',
+    closed: 'The setup page closed or the connection was interrupted. Return to {host} and ask your agent to reopen setup.',
+    expired: 'This page expired. Return to {host} and ask your agent to reopen setup.',
+    errors: {
+      invalid_key: 'Paste the complete API Key without “Bearer” or any extra text.', too_large: 'The input is too long. Paste only your API Key.',
+      unauthorized: 'The API Key is invalid or expired. Copy it again and retry.', permission: 'Cannot read your personal folder. Check the key’s access scope and file-read permissions.',
+      timeout: 'The connection timed out. Your key has not been saved. Check your network and retry.', connection: 'Cannot connect to BabelBird. Check your network and retry.',
+      config: 'The connection check passed, but local settings could not be saved. Ask your agent to check the config format and file permissions, then retry.',
+      saved_status_error: 'The connection passed and your key was saved, but progress could not be recorded. Return to your agent to check the connection. No need to re-enter your key.',
+      busy: 'A connection is being checked or was already saved. Return to your agent to check its status.', expired: 'This page expired. Ask your agent to reopen setup.',
+    },
+  },
+};
+export function languageFor(language) { return /^zh\b/i.test(language || '') ? 'zh' : 'en'; }

@@ -1,50 +1,43 @@
-# BabelBird Project Cloud Sync 0.4.1
+# BabelBird Project Cloud Sync 0.5.0
 
-[简体中文](README.md) · [Marketplace preparation](marketplace/README.md) · [Release notes](CHANGELOG.md)
+[简体中文](README.md) · [Supported agents](docs/SUPPORTED_AGENTS.md) · [Release notes](CHANGELOG.md)
 
 After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms.
 
-The Chinese product name is **项目云端同步巴别鸟插件**. This is a prerelease. Files retain their original names and folders; projects are not compressed into ZIP archives.
+Chinese product name: **项目云端同步巴别鸟插件**. This is a GitHub prerelease. Installation adapters cover Codex, WorkBuddy, CodeBuddy CLI, Claude Code, Cursor and Gemini CLI; adapter support does not mean every client has passed end-to-end testing.
 
-## Install in Codex
+## Install with one instruction
 
-Send this to Codex:
+Tell your current agent:
 
-> Install https://github.com/bypassdesign-dev/babelbird-plugins/tree/v0.4.1 and help me connect my BabelBird account.
+> Install https://github.com/bypassdesign-dev/babelbird-plugins and connect my BabelBird account.
 
-The installing agent opens a temporary local API Key page. Paste your key into the password field and click **保存并连接 (Save and connect)**. The page checks access to Personal Files and saves a private Codex connection. If the browser does not open, use the link supplied by the agent. Restart Codex once if it has not loaded the new connection.
+The agent identifies its host, checks out v0.5.0, installs two complete skills and opens a local setup page with Chinese and English text. Paste your API Key into its single password field and click **Save and connect**. The page includes a link to get a key. Do not send your key in chat; you do not need to reply “done.”
 
-The current local page is in Chinese. Ask your agent to guide you in your preferred language. The plugin's listing copy and WorkBuddy credential schema include Chinese and English.
+If the browser does not open, use the link supplied by the agent. Node.js 20+ and a browser on the same machine as the helper are required. The helper verifies access before saving private user configuration. Restart the host or reopen its session if it has not loaded the new connection. WorkBuddy may require you to approve third-party MCP permissions in the app; the installer does not approve them for you.
 
-Get your own APIKey from **Settings > API keys** in BabelBird; copy the APIKey shown on the application details page, not APP Key or APP Secret. See the [official illustrated guide](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html). Grant read/write access to the intended project folder. Do not post the key in chat or in GitHub issues.
+For installing agents: follow [INSTALL.md](INSTALL.md). Run `node install/install.mjs --host <id>`, share the returned URL and poll the returned `setupScript` with `--host <id> --wait` until connected, cancelled, expired or closed. Each wait lasts at most 25 seconds. Honor an explicitly requested ref; otherwise pin v0.5.0. Before the release tag exists, validate against the current test ref.
 
-For installing agents: read [INSTALL.md](INSTALL.md), install the package, launch the bundled setup helper and wait for its result. Downloading the repository alone does not complete setup. Node.js 20+, a compatible Codex configuration API and a browser on the same machine are required.
+The GitHub installer provides a **user-level Skills + MCP bundle**. It does not register a native plugin-menu entry. Native Codex / Claude Code packages and WorkBuddy connector sources remain available as separate distribution options.
 
-## Enable synchronization
+## Enable project sync
 
-Ask: “Enable BabelBird sync for this project.” Connecting the account alone does not bind or upload a project.
+Ask: “Enable BabelBird sync for this project.” Account setup alone does not bind or upload a project.
 
-- New Codex projects use `/个人文件/codex/<project>/`.
-- New WorkBuddy projects use `/个人文件/workbuddy/<project>/`.
-- To continue on another device or agent, select the existing cloud folder and download into a new local folder. An existing binding takes precedence over the default host folder.
-- Sync runs before agent edits, after completed batches and before the task finishes, when the host loads the project rules. It is not a background file watcher or a mounted cloud drive.
+New projects use `个人文件/<host>/<project>/`, where host is `codex`, `workbuddy`, `codebuddy`, `claude`, `cursor` or `gemini`. An existing binding or explicitly selected cloud folder takes precedence. To continue across devices or agents, reuse that cloud folder and restore into a new local directory.
 
-Local-only changes upload; remote-only changes download. Concurrent edits are preserved as conflicts. Deletions do not propagate automatically. Each transferred file is verified before its local baseline advances.
+Files keep their original names and folder structure; no ZIP archive is created. Once project rules are loaded, sync runs before agent edits, after completed batches and before task completion. It is not a background daemon or a mounted drive. Local binding and baseline files do not contain credentials and are excluded from uploads.
 
-Project configuration files, including .mcp.json, may be stored in the user's selected cloud project. Git ignore rules apply even when the bound project is a repository subdirectory. Host-wide credentials and the plugin's API Key remain outside the project; the default sensitive-file and cache exclusions still apply.
+Local-only changes upload; remote-only changes download. Concurrent changes are preserved as conflicts; deletions do not propagate automatically. Offline edits and baselines are retained. Partial failure is reported accurately. Git ignore and sensitive-file exclusions apply; host credentials and the plugin API Key stay outside the project.
 
-On macOS/Linux, updates preserve an existing file's permission bits. For a newly downloaded file, the helper accepts a known permission such as `"mode":"0755"`; otherwise it uses the local default. The cloud protocol does not preserve POSIX modes, so unknown executable bits cannot be restored automatically on a new device. Windows ACLs are not synchronized.
+## Credentials and support
 
-## WorkBuddy and Claude Code
+Get your APIKey from **Settings > API keys > application details** in BabelBird, not APP Key or APP Secret. Grant access to the intended folder. See the [official guide](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html).
 
-[WorkBuddy's connector package](workbuddy/babelbird-cloud/README.md) supplies Chinese/English metadata, a required password field and matching MCP token references. The connector has not been submitted to the WorkBuddy market. GitHub installations currently use a custom connector plus project skills; the Codex setup helper must not be used for WorkBuddy. WorkBuddy installation and its native credential form have not been validated in the app.
+Reuse an existing loaded, valid MCP connection. For a new key, the page reads Personal Files and lists one page before saving private configuration. A successful form does not prove the current host session has loaded MCP; the agent checks those states separately. Quota queries and test uploads are not part of default setup. [Manual entry](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md) is a fallback for environments unable to run the local page.
 
-Claude Code uses the packaged sensitive `api_key` setting. Its installation is also not validated in the app.
+The installer refuses to overwrite unmanaged or locally modified same-name skills. The agent preserves and resolves these files without handing technical decisions to a novice user.
 
-## Status and support
+See [supported agents](docs/SUPPORTED_AGENTS.md) for paths and planned adapters, and [VALIDATION.md](VALIDATION.md) for actual checks. WorkBuddy's full agent flow was blocked by login; other newly supported hosts have not completed client end-to-end testing. Historical large MCP batches encountered unresolved 403 errors. Transfers are per-file, without an atomic project commit or cross-device lock.
 
-Read [VALIDATION.md](VALIDATION.md) for actual checks and limitations. Large batches have historically encountered MCP 403 errors whose cause remains unresolved. Operations are per-file, without a cross-device lock or an atomic project commit.
-
-[Report a problem](https://github.com/bypassdesign-dev/babelbird-plugins/issues) with the host/version, a redacted error and reproduction steps. Never include API keys, signed transfer URLs or private project files.
-
-GitHub distribution and marketplace approval are separate. See the [submission checklist](marketplace/README.md) for remaining platform and publisher requirements.
+Run `node --test tests/*.test.mjs` for repository checks. [Report an issue](https://github.com/bypassdesign-dev/babelbird-plugins/issues) with host version, redacted errors and reproduction steps; never include keys, signed transfer URLs or private project files.

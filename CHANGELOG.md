@@ -1,5 +1,15 @@
 # 更新记录 / Changelog
 
+## 0.5.0 — 2026-10-24（GitHub 测试版 / prerelease）
+
+- 统一 GitHub 安装器支持 Codex、WorkBuddy、CodeBuddy CLI、Claude Code、Cursor、Gemini CLI，自动安装用户级 Skills 并打开本地 API Key 页面。
+- 本地页支持中英文、错误后重试、当前宿主名称和成功后的下一步；用户只填写 Key，不必回聊天确认“已填写”。
+- 新增私有配置适配，保留其他账号和设置；WorkBuddy 使用严格 JSON，不改写其生成的代理配置或权限审批状态。
+- 为新增宿主补充项目规则和默认分区；跨产品续接继续复用已绑定的云端目录。
+- 安装器保护已有自定义 Skill；修复 macOS 路径别名导致复制后的助手不启动。
+
+The GitHub installer now supports six host adapters, installs user-level Skills, and opens a bilingual local API Key form. This distribution does not register a native plugin menu entry. See [the support matrix](docs/SUPPORTED_AGENTS.md) and [validation](VALIDATION.md) for exact test levels; WorkBuddy desktop approval and full agent testing remain distinct from the successful page connection check.
+
 ## 0.4.1 — 2026-10-24（测试版 / prerelease）
 
 - 名称统一为「项目云端同步巴别鸟插件」，英文为 BabelBird Project Cloud Sync；增加中英文市场文案、英文使用说明和 WorkBuddy 密钥表单翻译。

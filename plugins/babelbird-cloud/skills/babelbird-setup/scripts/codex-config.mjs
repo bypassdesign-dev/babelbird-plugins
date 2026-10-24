@@ -64,7 +64,7 @@ export async function saveCodexConnection(apiKey, { codexHome = codexHomePath(),
   if (process.platform !== 'win32') await chmod(path, 0o600);
   const client = configClient(home, codexBin);
   try {
-    await client.request('initialize', { clientInfo: { name: 'babelbird-setup', version: '0.4.1' } });
+    await client.request('initialize', { clientInfo: { name: 'babelbird-setup', version: '0.5.0' } });
     client.notify('initialized');
     const snapshot = await client.request('config/read', { includeLayers: true, cwd: home });
     const layer = snapshot.layers?.find(item => item.name.type === 'user' && resolve(item.name.file) === path);

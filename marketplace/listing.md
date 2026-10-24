@@ -21,7 +21,7 @@ After setup, automatically sync local Codex/WorkBuddy project files to BabelBird
 
 文件保持原有名字和目录结构，无需压缩工程。Codex 新工程默认保存到「个人文件/codex」，WorkBuddy 默认保存到「个人文件/workbuddy」；已有工程始终复用用户选择的目录。
 
-Codex 安装智能体会打开本地 API Key 页面，填写后自动检查个人文件访问并保存私有连接。WorkBuddy 提供独立 MCP + Skill 包和中英文密钥表单；市场安装尚待实机验证。
+GitHub 安装器为 Codex、WorkBuddy 等六个已适配产品打开本地中英文 API Key 页面，填写后自动检查个人文件访问并保存私有连接。WorkBuddy 仍需在应用内批准 MCP；独立市场包的安装尚待实机验证。
 
 需要个人 API Key、目标目录读写权限、网络、Node.js 20+ 及支持本地工具的智能体。同步依赖任务期间加载项目规则，不是关闭智能体后仍运行的后台服务。双方同时修改会保留冲突，不自动传播删除；新设备首次下载的未知文件权限不会被猜测。
 
@@ -31,7 +31,7 @@ Connect your own BabelBird account and bind a local project to a cloud folder. P
 
 Files keep their names and folder structure without compressing the project. New Codex projects use Personal Files/codex; new WorkBuddy projects use Personal Files/workbuddy. Existing bindings always keep the selected cloud folder.
 
-The Codex installing agent opens a local API Key form, checks Personal Files access and saves a private connection. WorkBuddy has a separate MCP + Skill package and bilingual credential schema; its marketplace installation still needs in-app validation.
+The GitHub installer opens a bilingual local API Key form for six implemented host adapters, checks Personal Files access and saves a private connection. WorkBuddy requires native MCP approval; its separate marketplace package still needs in-app validation.
 
 A personal API Key, read/write access to the target folder, network access, Node.js 20+ and local agent tools are required. Synchronization runs during agent tasks when project rules are loaded, not as an always-on background service. Conflicts are preserved and deletions are not propagated. Unknown file permissions are not guessed on first download to a new device.
 
@@ -47,6 +47,6 @@ WorkBuddy 使用实际支持的 `name_zh/name_en`、`description_zh/description_
 
 Codex 的 `displayName` 是一个字符串，GitHub 包显示指定的中文名称；英文名称在说明及本材料中提供。正式国际市场提交按官方指南使用英文基础字段，`extensions.com.openai.publication.translations` 提供中文副标题和描述，未发明 `displayName_en` 字段。当前官方文档说明：翻译可导入并保存在包中，但尚不改变目录页面/API 的显示，不承诺自动切换名称。
 
-本版 Codex 本地设置页仍为中文；WorkBuddy 提供中英文表单字段。实际翻译展示和安装体验以宿主测试为准。
+本版共用本地设置页支持中英文并按浏览器语言选择，也可手动切换；WorkBuddy 市场包提供中英文表单字段。实际市场翻译展示和安装体验以宿主测试为准。
 
 来源：[OpenAI listing translations](https://developers.openai.com/plugins/deploy/submission#translate-listing-text)、[WorkBuddy 元信息与表单](https://open.workbuddy.cn/docs/connector)。

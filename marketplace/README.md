@@ -1,6 +1,6 @@
 # 插件市场上线材料 / Marketplace submission kit
 
-版本：0.4.1。核对日期：2026-10-24。发布主体账号：bypassdesign-dev。
+版本：0.5.0。核对日期：2026-10-24。发布主体账号：bypassdesign-dev。本轮优先交付 GitHub 安装版，支持范围见 [智能体清单](../docs/SUPPORTED_AGENTS.md)。
 
 本目录是准备材料，**不是已上架或已具备全部提交条件的声明**。GitHub 测试版可以独立安装；正式市场审核还有下列外部条件。
 
@@ -37,9 +37,9 @@
 ## WorkBuddy 提交前必须完成
 
 1. 登录开发者账号并完成主体与品牌材料。接入选择 MCP + Skill、自填 Token 模式；`BABELBIRD_API_KEY` 与请求头占位符已匹配。
-2. 在已登录 WorkBuddy 4.24.0+ 中实际验证安装、Token 表单、正确／错误 Key、重启恢复、工程同步和跨平台续接。此前测试停在需要登录，因此不能标记通过；当前 GitHub 入口仍使用自定义连接器。
+2. 在已登录 WorkBuddy 4.24.0+ 中实际验证市场安装、Token 表单、重启恢复、工程同步和跨平台续接。此前完整智能体测试停在需要登录，因此不能标记通过；0.5.0 GitHub 安装改用本地中英文页面，独立验证范围见 VALIDATION。
 3. 按相同示例工程验证新增、更新、下载、冲突和失败后的保留行为；填写真实结果。
-4. 将 `workbuddy/babelbird-cloud` 目录按 [连接器规范](https://open.workbuddy.cn/docs/connector) 提交审核。Codex 的本地页面助手不属于 WorkBuddy 包。
+4. 将 `workbuddy/babelbird-cloud` 目录按 [连接器规范](https://open.workbuddy.cn/docs/connector) 提交审核。该包包含共用的本地页面助手，但不能把 GitHub 安装检查等同于市场审核通过。
 
 ## 打包边界
 

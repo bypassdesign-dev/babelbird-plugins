@@ -1,79 +1,43 @@
-# API Key 具体填在哪里
+# API Key 填写入口
 
-先判断实际宿主。以下是当前可用的填写方法；只有宿主确实提供凭据弹窗时才提示用户使用弹窗。用户已有有效连接时直接复用。
+## 默认：自动打开本机设置页
+
+六个已适配宿主（`codex`、`workbuddy`、`codebuddy`、`claude`、`cursor`、`gemini`）均优先执行 `babelbird-setup`。智能体从 Skill 目录运行 `node scripts/setup-host.mjs --host <id> --start`，或使用安装器已返回的页面。需要 Node.js 20+ 和同机浏览器。
+
+页面含中英文、一个密码框及获取 Key 入口。智能体自动打开页面，也给出返回的可点击 URL；用户粘贴 API Key 并点击“保存并连接 / Save and connect”。智能体用 `--host <id> --wait` 自动等待，每次最多 25 秒，直到成功、取消、过期或助手退出。无需回复“已填写”，不要把 Key 发到聊天。
+
+Key 先通过个人文件读取和一页目录检查，再保存到用户私有配置；默认页面十分钟过期。已加载有效的 MCP 直接复用，不重复填写。页面保存成功不代表当前宿主已加载工具，未加载时重启／重新打开会话后复用凭据验证。WorkBuddy 的第三方 MCP 权限必须由用户在应用内批准，不能自动批准。
 
 ## 获取密钥
 
-打开 [巴别鸟官方教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)，登录巴别鸟后进入“设置 > API秘钥”，创建或打开应用，复制应用详情里的 **APIKey**。不是 APP Key，也不是 APP Secret。需要详细权限说明时看 [获取 API Key](api-key.md)。
+打开 [官方教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)，登录巴别鸟后进入“设置 > API秘钥”，创建或打开应用，复制详情里的 **APIKey**，不是 APP Key 或 APP Secret。权限说明见 [获取 API Key](api-key.md)。个人文件及目标工程必须在授权范围内。
 
-## Codex 默认：自动打开本地设置页
+## 仅在本地页不可用时：手工备用
 
-安装智能体在 `babelbird-setup` Skill 目录运行 `node scripts/setup-codex.mjs --start`，自动打开仅含 API Key 的本地页面，同时给用户返回的填写链接。用户粘贴密钥、点击“保存并连接”；助手自动读取个人文件并保存用户私有配置。使用 `--wait` 等待结果，不要求用户额外回复“已填写”。
+远程执行、无同机浏览器或宿主限制导致无法运行本地页时，才使用以下方式。智能体先说明具体限制，再提供当前宿主实际存在的入口；不要让新用户在多种配置格式中自行选择。127.0.0.1 指向运行助手的电脑，不能把远程 URL 当成本机入口。
 
-需要 Node.js 20+ 和 Codex，可由安装智能体检查。页面在同一台电脑上运行，默认十分钟内有效；成功后退出。页面会保留其他账号及设置，不能将它用于企业私有化地址。宿主尚未加载新连接时只需重启 Codex 一次，之后复用密钥验证。
+### Codex 客户端设置
 
-以下桌面和 CLI 方法仅用于不支持本地页面的环境排障，不作为小白默认步骤。
+在提供该入口的客户端打开“设置 / Settings > MCP 服务器 / MCP servers > 添加服务器 / Add server”。名称用 `babelBirdPersonal`（冲突时由智能体选择），类型 Streamable HTTP，URL 为 `https://www.babel.cc/mcp`，Headers 添加 `Authorization`，值为 `Bearer ` 加自己的 APIKey，注意空格。Bearer token env var 留空，它要求变量名而非 Key。保存后按提示重启并由智能体只读验证。不要修改只读插件分发配置或关闭其他账号连接。
 
-## Codex 备用：通过客户端设置填写
+### WorkBuddy 自定义 MCP
 
-适用于提供 MCP servers 设置的 ChatGPT 桌面／Codex 客户端。菜单语言可能不同，英文名称一并列出。这个入口是客户端原有的连接表单，不是本插件自定义的安装密码框。
+仅在本地页无法使用时，通过“专家·技能·连接器 > 连接器 > 自定义连接器”或当前版本对应入口添加远程 Streamable HTTP，地址 `https://www.babel.cc/mcp`，请求头 `Authorization` 为 `Bearer ` 加 APIKey。保存后重载，并在应用内批准第三方 MCP 权限。完整连接器的 Token 表单仅在该分发方式真实提供时可用，GitHub 用户不必寻找尚未上架的表单。
 
-1. 打开 **设置（Settings）> MCP 服务器（MCP servers）> 添加服务器（Add server）**。如果已存在本人的巴别鸟连接，先使用其设置，不重复创建。
-2. 新建时按下表填写。不要修改“来自插件（From plugins）”中的只读分发配置。
+### 其他宿主与 CLI
 
-| 字段 | 填写内容 |
-| --- | --- |
-| 名称（Name） | `babelBirdPersonal`，已有同名但用途不同时由智能体选择不冲突的名称 |
-| 类型（Type） | `Streamable HTTP` |
-| URL | `https://www.babel.cc/mcp` |
-| Bearer token env var | **留空**；此字段填写的是环境变量名称，不是 APIKey |
-| Headers／请求头 | 点击 Add header，名称填 `Authorization` |
-| 上述请求头的值 | 先输入 `Bearer `，注意末尾有一个空格，再粘贴自己的 APIKey |
-| Headers from environment variables | 留空 |
+智能体根据实际宿主配置能力准备用户私有入口。CodeBuddy CLI、Claude Code、Cursor 使用 URL 与 headers，Gemini CLI 使用 httpUrl 与 headers；不将纯 Key 放进聊天或公开命令。Claude 原生插件路线可使用其敏感 `api_key` 配置项，不能把原生表单当作 GitHub Skills 安装必然提供的入口。
 
-3. 点击 **Save／保存**，按客户端提示选择 **Restart／重启**。重启后在原会话回复“已填写，请继续只读连接检查”。
-4. 密钥保存在当前用户的本机 MCP 配置，不写进项目或插件包。表单字段不一定遮挡字符，填写时不要共享包含密钥的截图。
-
-**由安装智能体完成：**验证新的个人连接后保留 Skill 和原有 MCP 入口。助手环境中缺少变量不证明旧宿主没有凭据；原入口可能属于另一个账号，不能自动关闭。以实际返回的个人连接名验证，不把其他入口未配置的警告误判为新连接失败。
-
-这是启用个人连接、复用同一套 Skill 的模式。不要关闭整个插件，不要删除旧连接，不要修改安装缓存，也不要把真实密钥写入分发的 mcp.codex.json。个人连接未验证通过时先保留原配置。Skill 使用实际发现的工具名，允许服务名为 babelBirdPersonal 或已有的巴别鸟连接名。
-
-此方式使用 Codex 支持的用户级 `http_headers` 配置；如果使用远程主机，配置必须落在实际执行 MCP 的那个主机。菜单不存在时明确说明当前客户端差异，改用下面的 CLI 方法，不能声称桌面已经完成配置。
-
-## Codex CLI：在终端私密输入
-
-使用 CLI 的用户可以保留插件内置 MCP。在用户可交互的终端中执行，**真实密钥不要直接放进命令文字**。
-
-macOS／Linux：先运行 `bash`，再逐行执行：
+Codex CLI 原生插件环境变量方式只在用户可交互终端中私密输入；密钥不出现在命令文字中：
 
 ```bash
-read -r -s -p '请粘贴巴别鸟 API Key，按回车确认（输入不会显示）: ' BABELBIRD_API_KEY
+read -r -s -p 'BabelBird API Key: ' BABELBIRD_API_KEY
 export BABELBIRD_API_KEY
 codex
 ```
 
-Windows PowerShell：
+该变量仅供此终端启动的进程使用，不会更新已运行的桌面客户端，也不是永久保存。需要持久配置时由智能体使用宿主用户私有配置，保留其他设置，不暗中写全局环境或共享启动脚本。
 
-```powershell
-$babelSecret = Read-Host '请粘贴巴别鸟 API Key，按回车确认' -AsSecureString
-$env:BABELBIRD_API_KEY = [System.Net.NetworkCredential]::new('', $babelSecret).Password
-Remove-Variable babelSecret
-codex
-```
+## 检查与恢复
 
-输入不显示字符是正常行为。最后一行启动能读取密钥的 CLI；在新会话中说“继续巴别鸟只读连接检查”。这只作用于该终端启动的进程，不会给已经运行的桌面应用补上环境变量，也不是永久保存。希望长期复用且有桌面客户端时可用上面的设置表单；智能体不得把子进程里的变量视为当前宿主已经可读取。
-
-## WorkBuddy：当前 GitHub 包的填写方法
-
-1. 打开 **专家·技能·连接器 > 连接器 > 自定义连接器**，新增远程 MCP；若当前版本菜单名称有变化，寻找“连接器／自定义 MCP”，不要改用 Codex 的环境变量流程。
-2. 地址填写 `https://www.babel.cc/mcp`，传输类型选择 `Streamable HTTP`。
-3. 请求头名称填 `Authorization`，值填 `Bearer ` 加自己的 APIKey，Bearer 后有一个空格。保存并启用连接，按客户端提示重新打开项目会话。
-4. 回复“已填写，请继续只读连接检查”。
-
-GitHub 连接器包尚未上架 WorkBuddy 市场，所以当前不能要求用户去找其不存在的安装 Token 表单。只有通过支持完整连接器包的宿主／平台安装、并且实际出现表单时，才在 **巴别鸟 API Key** 密码项填写纯 APIKey（不加 Bearer）；该表单会自动组装请求头。
-
-## 安装后没有打开页面
-
-直接告诉智能体“打开巴别鸟密钥填写页面”。Codex 0.4.1 的安装智能体应运行助手并给出可点击入口；它是本机浏览器页面，不是原生安装密码框。只在实际无法运行页面时采用上述备用方法。
-
-参考：[Codex MCP 配置](https://learn.chatgpt.com/docs/extend/mcp?surface=cli)、[Codex 插件安装引导](https://developers.openai.com/plugins/build/plugins)、[WorkBuddy 连接器](https://open.workbuddy.cn/docs/connector)。
+分别报告配置保存、页面验证和当前宿主实际工具验证。目录读取超时不等于密钥失效，先排查加载与网络；不要反复索要 Key。手工备用完成后继续实际只读检查，不上传测试文件。仅出现配置文件或工具列表时不能宣布接入成功。

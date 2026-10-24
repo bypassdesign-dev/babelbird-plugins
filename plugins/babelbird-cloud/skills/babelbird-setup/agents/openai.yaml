@@ -1,6 +1,6 @@
 interface:
   display_name: "巴别鸟首次设置"
-  short_description: "安装后主动说明 API Key 获取和填写位置，引导完成巴别鸟只读连接验证"
-  default_prompt: "使用 $babelbird-cloud:babelbird-setup 继续首次设置，告诉我在当前客户端哪里填写 API Key，并完成只读连接检查。"
+  short_description: "自动打开中英文 API Key 填写页，保存当前智能体的私有连接并检查个人目录"
+  default_prompt: "使用 babelbird-setup 继续首次设置，为当前智能体打开本地 API Key 填写页，等待填写并检查连接。"
 policy:
   allow_implicit_invocation: true

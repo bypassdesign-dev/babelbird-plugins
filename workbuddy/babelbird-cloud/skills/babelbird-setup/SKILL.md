@@ -4,23 +4,42 @@ description: Use when installing BabelBird from its GitHub link, continuing setu
 display_name: "巴别鸟首次设置"
 description_zh: "首次配置巴别鸟 API Key，验证连接并启用工程自动同步。"
 description_en: "Configure a BabelBird API Key and enable project sync."
-version: "0.4.1"
+version: "0.5.0"
 author: "bypassdesign-dev"
 disable-model-invocation: false
 ---
 
 # 巴别鸟首次设置
 
-为当前用户建立巴别鸟连接。用户通过仓库链接要求安装本插件时，文件安装后主动执行本流程，不等待用户知道 Skill 名称。只要求下载或离线安装时尊重该范围。读取 [首次配置流程](../babelbird-project-cloud/references/setup.md#首次配置流程) 与 [API Key 填写入口](../babelbird-project-cloud/references/credential-entry.md)，按实际宿主给出可执行步骤。
+用户通过 GitHub 链接要求安装时，文件安装后主动继续连接，不等待用户知道 Skill 名称。只下载、离线安装或稍后配置时尊重范围。GitHub 安装是用户级 Skills + MCP 组合，不注册原生插件菜单。
 
-1. 检查当前用户已有的巴别鸟连接和凭据引用；有效时直接验证，不重新索要。缺少时主动说明“插件已安装，还差 API Key 配置”，提供 [官方获取教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html) 和“设置 > API秘钥 > 应用详情 > APIKey”的获取路径，提醒不是 APP Key／APP Secret。
-2. 给出当前宿主的具体填写步骤，不能只说“私密入口”或“设置环境变量”。Codex 桌面优先引导到“设置 > MCP 服务器 > 添加服务器”，按填写入口文档设置个人连接的 URL 和 Authorization 请求头，值为 Bearer 加空格再加 APIKey；Bearer token env var 字段留空。Codex CLI 使用文档中的终端隐藏输入方法。WorkBuddy 当前 GitHub 包使用“专家·技能·连接器 > 连接器 > 自定义连接器”的远程 MCP 请求头；只有实际出现完整连接器 Token 表单时才使用其 API Key 密码项。Claude Code 使用已有的敏感配置项 api_key。
-   能使用宿主的凭据表单时直接提供入口，否则给出菜单、字段、填写内容、保存和重启步骤，等待用户回复“已填写”后继续。没有表单能力时不声称已弹窗。默认让用户在客户端填写，不要求把密钥发到聊天，不使用演示密钥或发送无认证业务调用。
-3. 当前用户已经主动提供、或已经保存的凭据直接复用。环境变量不可见时先解决客户端进程的加载问题，不因超时或重启要求重新申请 API Key。不能把终端子进程中的变量设置视为已更新运行中的桌面客户端。
-4. 发现实际 MCP 工具，用 `getFileInfoByPath` 定位用户指定目录或默认 `/个人文件`，核对成功响应和目录类型，再用返回的真实目录 ID 调用 `listFolder`（页号 0、每页 1 条）。不要把协议根目录 `0` 当成个人文件。检查 MCP `isError` 及业务状态；有效成功响应（包括空目录）即可通过只读测试。目录读取超时或断连最多重试一次；仍失败才报告“凭据已配置，目录读取未验证”。默认跳过 `getUsageAndQuota`；如已有配额查询超时、`Transport closed` 或无业务结果的流结束，记录“配额未知，已跳过查询”，不重试、不阻塞设置，也不据此重新索要密钥。401/403、目录读取失败和明确空间不足仍须按实际响应处理。
-5. 分别报告“凭据已填写”“客户端可读取”“只读测试通过”的实际状态，报告中不出现密钥或鉴权头。配置引用可保存在宿主用户私有配置区，不能保存到工程或插件中。
-6. 只读检查到此完成；用户明确只要求连接测试时停止。用户启用工程自动同步时，当前工程明确则进入 `babelbird-project-cloud`，按实际宿主的默认目录或用户指定目录建立绑定并执行首次同步；没有明确工程时只补问工程位置。绑定后任务前拉取、每批修改后上传，任务结束前复查，跨平台继续复用同一目录。
+## 自动打开一个密码框
 
-插件内置 MCP 可使用环境变量；桌面用户也可按填写入口文档选择用户级个人连接。个人连接验证通过后，保留 Skill、已有连接及其启用状态；不因新增连接就关闭旧 MCP，旧连接可能属于另一个账号。不把插件鉴权密钥写入项目配置。使用实际发现的工具名称，不要求服务必须叫 babelBird。
+1. 识别实际宿主 ID：`codex`、`workbuddy`、`codebuddy`、`claude`、`cursor` 或 `gemini`。检查当前已加载的巴别鸟 MCP，有效时直接复用并只读验证，不重复索要 Key。安装器写入的 `installed-host.json` 可供核对；不要按模型名猜宿主。需要 Node.js 20+，Codex 还需要可用的 Codex 可执行文件，由智能体定位。
+2. GitHub 安装器已经返回 `url` 时直接使用，不再启动第二个页面。否则在本 SKILL.md 所在目录执行（将占位符替换为实际 ID）：
 
-交接时分别说明插件安装、凭据配置、只读连接三项的真实状态。缺少填写或重启时给出唯一明确的下一步；不能以“插件已安装”代替“可开始同步”。
+   ```text
+   node scripts/setup-host.mjs --host <id> --start
+   ```
+
+   也可执行安装器返回的绝对 `setupScript`。脚本随 Skill 安装，不依赖临时克隆目录。助手自动打开默认浏览器，并返回本次临时 `url`；在对话中也给出 **[填写 API Key](返回的完整 URL)**。中英文页面只有一个密码框，用户粘贴 Key 并点击“保存并连接 / Save and connect”。获取密钥按钮指向官方入口。不要要求把密钥发到聊天，不用菜单、请求头或教程代替默认页面。
+3. `browserLaunch: unavailable` 时，通过宿主浏览器工具打开同一个 URL 并保留可点击链接。页面与浏览器必须在同一台电脑；不能把远程主机的 127.0.0.1 当成本机。无法打开时准确说明，才转到 [备用填写方法](../babelbird-project-cloud/references/credential-entry.md)。Codex 可执行文件无法找到时，由智能体定位并传 `--codex-bin`，不把命令工作交给新用户。
+4. 自动运行有界等待，每次最多 25 秒；waiting / receiving / checking / saving 时继续等待，直至 connected、助手退出、十分钟过期或用户取消。无需用户另发“已填写”，不反复催促或查询配额。
+
+   ```text
+   node scripts/setup-host.mjs --host <id> --wait
+   ```
+
+   `--status` 可立即查询。关闭标签页不等于停止助手；用户取消时停止等待，助手到期退出。过期后需要再次填写时重新 `--start`。`connected` 表示个人文件读取及一页列表成功后，私有配置已保存；页面错误可原地重试。
+5. 助手将连接保存到实际宿主的用户私有配置，保留其他设置、账号、Skill 和启用状态。相同配置复用，不覆盖不同账号。不打印鉴权头，不把 Key 写入项目、安装包或命令历史，不修改生成缓存。WorkBuddy 默认写 `~/.workbuddy/mcp.json`，不是 `~/.workbuddy/.mcp.json`。
+6. 使用返回的 `serverName` 检查当前宿主是否已加载。已加载就用实际 MCP 工具做下方只读验证；未加载则说明“已保存并通过页面检查，请重启当前宿主或重新打开会话以加载连接”。重启后复用凭据，不能重新要求填写。WorkBuddy 第三方 MCP 权限必须由用户在应用内批准，不修改设置来自动批准。页面成功与当前会话工具可用是两个状态，分别报告。
+
+若返回 `saved_status_error` 或页面提示已保存但无法记录进度，先检查实际连接与宿主加载，不重新索要 Key。`idle` 本身不能证明成功或失败。助手只连接公有云 `https://www.babel.cc/mcp`，私有化部署必须使用管理员确认的独立地址，不把私有化密钥发到公有云。
+
+## 只读验证与后续
+
+使用实际工具 `getFileInfoByPath` 读取 `/个人文件`，确认业务成功与目录类型，再用真实 ID 调用 `listFolder`，`pageIndex: 0, pageSize: 1`。协议根目录 `0` 不代表个人文件。核对 MCP `isError` 和业务结果；空目录成功有效，HTTP 200 或工具列表不能替代验证。
+
+默认跳过 `getUsageAndQuota`。目录读取超时最多重试一次，401/403、权限失败和真实传输失败如实报告；配额超时不证明密钥失效。
+
+仅安装连接时不上传、扫描或绑定工程。用户启用同步后进入 `babelbird-project-cloud`：新工程默认 `个人文件/<host>/工程名/`，六个 host ID 分别对应各自分区；既有绑定或用户指定目录优先，跨设备和跨智能体继续原目录。任务编辑前、每批修改后、结束前同步，不提供常驻后台服务。

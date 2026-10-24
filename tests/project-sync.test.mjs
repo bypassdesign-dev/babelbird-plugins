@@ -8,6 +8,23 @@ import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 
 const { planSync, scanProject, bindProject, readBinding, recordVerified, readState, safePath, transferUrl, run } = await import('../plugins/babelbird-cloud/skills/babelbird-project-cloud/scripts/project-sync.mjs');
+for (const [host, rules] of Object.entries({ codebuddy: '.codebuddy/rules/babelbird-sync.md', cursor: '.cursor/rules/babelbird-sync.mdc', gemini: 'GEMINI.md', claude: 'CLAUDE.md' })) {
+  test(`${host} binding writes discoverable rules and preserves existing instructions`, async () => {
+    const root = await mkdtemp(join(tmpdir(), 'babelbird-new-host-'));
+    try {
+      if (!rules.includes('/')) await writeFile(join(root, rules), '# My instructions\n');
+      const cloud = { endpoint: 'https://www.babel.cc/mcp', folderId: '123', path: '/个人文件/codex/shared' };
+      await bindProject(root, cloud, host);
+      await bindProject(root, cloud, host);
+      const content = await readFile(join(root, rules), 'utf8');
+      assert.match(content, /pull non-conflicting remote changes before editing/);
+      assert.equal((content.match(/<!-- babelbird-task-sync -->/g) || []).length, 1);
+      if (!rules.includes('/')) assert.match(content, /My instructions/);
+      else assert.match(content, /alwaysApply: true/);
+      assert.equal((await readBinding(root)).cloud.path, cloud.path);
+    } finally { await rm(root, { recursive: true, force: true }); }
+  });
+}
   const remote = (fileId, version = 0) => ({ fileId, version, mtime: version + 1, size: 3 });
   const local = (path, sha256) => ({ path, sha256, md5: '0'.repeat(32), size: 3 });
   const sha = 'a'.repeat(64), changed = 'b'.repeat(64);

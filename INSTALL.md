@@ -1,42 +1,58 @@
-# 安装巴别鸟并打开 API Key 页面
+# GitHub 安装与首次连接（0.5.0）
 
-收到本仓库链接和“帮我安装”时执行。用户只询问信息、只下载或稍后配置时尊重其范围。
+收到本仓库链接和“帮我安装”时执行完整流程。用户只询问信息、只下载、离线安装或稍后配置时尊重其范围。
 
-## 安装版本
+## 1. 识别宿主并获取版本
 
-先判断实际宿主。检查已有安装与有效连接，不重复索要已配置的密钥。网页摘要可能陈旧，核对真实仓库文件及 ref，不能把 0.3.x 当成当前版本。
+根据实际运行应用识别宿主，不按模型名猜测。支持 ID：`codex`、`workbuddy`、`codebuddy`、`claude`、`cursor`、`gemini`。路径与格式见 [支持的智能体](docs/SUPPORTED_AGENTS.md)。检查 Node.js 20+；Codex 还需可用的 Codex 可执行文件，由智能体定位。
 
-Codex 支持 `codex plugin` 时执行：
-
-```bash
-codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.4.1
-codex plugin add babelbird-cloud@babelbird-local
-```
-
-用户给了明确的测试分支或其他 ref 时使用该 ref，不替换成尚未发布的 tag。已有市场按当前 CLI 的更新方式处理，并核对安装版本。远程添加失败可克隆相同 ref 并添加本地市场；没有插件命令时说明当前客户端不支持，不反复执行相同命令。
-
-## Codex 安装后立即打开页面
-
-读取安装包中的 [首次设置 Skill](plugins/babelbird-cloud/skills/babelbird-setup/SKILL.md)，在其目录执行：
+用户明确指定分支、tag 或 commit 时保留其 ref。否则默认固定 v0.5.0，不跟随默认分支或陈旧网页摘要。正式发布前在当前测试 ref 验证，不调用尚不存在的 tag。以下是智能体执行的正式安装示例，克隆到用户可写且不与既有工程冲突的位置：
 
 ```bash
-node scripts/setup-codex.mjs --start
+git clone --branch v0.5.0 --depth 1 https://github.com/bypassdesign-dev/babelbird-plugins.git babelbird-plugins-v0.5.0
+cd babelbird-plugins-v0.5.0
+node install/install.mjs --host codex
 ```
 
-需要 Node.js 20+ 和可用的 Codex 可执行文件；由安装智能体检查与定位。助手自动打开默认浏览器并返回临时 `url`。在对话中也给出 **“填写 API Key”** 可点击链接，只让用户粘贴密钥、点击“保存并连接”。浏览器未自动启动时使用宿主浏览器工具打开返回的同一个 URL。
+最后一行将 `codex` 替换为实际宿主 ID。安装器复制 `babelbird-setup` 和 `babelbird-project-cloud` 的完整目录、引用和脚本到用户 Skills 目录，然后启动本地设置页。安装后执行返回的绝对 `setupScript`，不依赖克隆目录。
 
-**默认流程不能交接为教程、MCP 菜单、请求头或环境变量配置步骤。**没有密钥时页面提供获取按钮。不要要求把密钥发到聊天，不读取或打印鉴权头。
+默认 GitHub 路线是用户级 Skills + MCP 组合，不注册原生插件菜单。Codex / Claude Code 原生插件包仍保留；仅在用户选择原生路线时使用，不把原生安装命令混入默认流程。
 
-启动后按 Skill 使用 `--wait` 自动等待页面结果，每次有界等待最多 25 秒。不要让用户额外发送“已填写”，也不要只发链接就宣称设置完成。成功、助手退出、十分钟过期或用户取消时结束等待；关闭标签页不会立即停止助手。远程／无本机浏览器的实际限制才使用 [备用填写方法](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md)。
+## 2. 保留已有安装与连接
 
-## 完成条件
+先检查当前已加载的巴别鸟 MCP。如果有效，做下方只读验证并复用；需要安装或更新 Skills 时使用 `node install/install.mjs --host <id> --install-only`，避免重复密钥提示。`installed_not_connected` 仅描述安装器没有启动连接流程，不否定已通过验证的现有连接。
 
-助手 `connected` 表示个人文件与一页目录读取成功，且用户私有 MCP 配置已保存。它保留其他连接与 Skill，不自动关闭已有插件的 MCP，因为它可能属于另一个账号。使用返回的 `serverName` 检查新连接；其他未配置入口的提示不能代替此连接的检查结果。
+安装器拒绝覆盖没有安装回执或本地修改过的同名 Skill。智能体应保留原文件、比较差异、检查是否已有适用安装，再在不丢失修改的前提下处理；不删除回执绕过保护，不直接覆盖，也不要求新用户判断技术字段。确实需要用户取舍时先准备具体差异和可恢复方案。
 
-核对当前宿主是否加载新连接。已加载时调用实际 MCP 工具复查；未加载时说明“已保存并通过页面检查，请重启 Codex 一次”，重启后直接复用配置验证，不重新要求密钥。页面直连成功和当前会话工具加载是两个状态，分别如实报告。
+保留其他 MCP、账号、启用状态与设置，不因助手进程看不到环境变量而关闭旧连接。不要读取或打印鉴权头，不把密钥写进项目、安装包、日志或命令历史。
 
-默认跳过配额，不上传测试文件。用户仅安装时不绑定或扫描上传工程；用户同时要求同步时，连接通过后按原请求建立绑定。Codex 默认 `个人文件/codex/工程名/`，跨平台续接复用原目录。
+## 3. 自动打开单项密钥页并等待
 
-## WorkBuddy 和 Claude Code
+默认安装命令返回 JSON，包含 `setupScript`、`url` 等字段。自动打开同机浏览器，在对话中也提供 **[填写 API Key](返回的完整 URL)**；只让用户粘贴 Key 并点击“保存并连接 / Save and connect”。中英文页面提供获取密钥入口。不能要求把密钥发到聊天，也不需要用户回复“已填写”。
 
-WorkBuddy 按 [专用说明](workbuddy/babelbird-cloud/README.md) 安装两项 Skill 到选定工程的 `.codebuddy/skills/` 并使用自定义连接器。当前版本未实现 WorkBuddy 本地页自动配置；不要运行 Codex 助手，不声称已上架 WorkBuddy 市场。Claude Code 使用插件敏感配置项 `api_key`。
+浏览器启动失败时，通过宿主浏览器工具打开返回的同一个 URL，并如实报告。远端主机的 127.0.0.1 不是用户电脑；仅远程／无浏览器等真实限制才使用 [备用填写方法](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md)。
+
+如果安装返回 `setup_failed`，Skills 可能已安装；检查原因后用返回的绝对脚本路径重新启动：
+
+```text
+node "<setupScript>" --host <id> --start
+node "<setupScript>" --host <id> --wait
+```
+
+占位符由智能体替换，不原样交给用户。每次 `--wait` 最多 25 秒；在 waiting / receiving / checking / saving 时继续等待并保持简短进度沟通。直到 connected、用户取消、expired 或助手退出。关闭标签页不等于取消，临时助手默认十分钟过期；过期后需要新入口时重新启动。`--status` 可立即查询，不轮询配额，不要求用户额外确认已填写。
+
+## 4. 核对页面与当前宿主的两个状态
+
+`connected` 表示助手已读取个人文件、列出一页目录并保存用户私有 MCP 配置。使用返回的 `serverName`，检查当前宿主是否加载该连接。已加载时调用实际 MCP 工具复查；尚未加载时说明“配置已保存并通过页面检查，请重启当前宿主或重新打开会话以加载连接”。重启后复用凭据，不再索要 Key。
+
+WorkBuddy 需要用户在应用内批准第三方 MCP 权限；不要修改权限设置以自动批准。新增配置后需要重新加载应用／会话；配置文件或页面成功不能替代宿主工具实测。
+
+只读验证：`getFileInfoByPath` 定位 `/个人文件`，确认业务成功与目录类型，使用真实 ID 调用 `listFolder`，`pageIndex: 0, pageSize: 1`。同时检查 MCP `isError` 与业务结果，空目录成功也有效。HTTP 200、初始化成功或工具列表可见都不够。目录超时最多重试一次，鉴权失败如实处理。默认跳过配额，不上传测试文件。
+
+如果返回 `saved_status_error` 或提示配置已保存但进度记录失败，先验证实际配置与宿主加载，不重新要求密钥。`idle` 不能证明成功或失败。
+
+## 5. 继续原请求
+
+用户仅安装时到连接检查为止，不扫描、绑定或上传工程。用户同时要求同步时，进入 `babelbird-project-cloud`，按实际宿主默认 `个人文件/<host>/工程名/` 建立绑定；已绑定或用户指定目录优先，跨设备和跨智能体复用原目录。
+
+交接分别说明 Skills 安装、凭据保存、页面目录检查、宿主 MCP 加载和真实只读验证的状态。未实测不能报告客户端端到端成功。

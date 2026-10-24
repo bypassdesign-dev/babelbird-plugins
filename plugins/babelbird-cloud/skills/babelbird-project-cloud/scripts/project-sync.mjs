@@ -59,18 +59,21 @@ export async function readBinding(root) {
 }
 
 export async function bindProject(root, cloud, host) {
-  if (!['codex', 'workbuddy', 'claude'].includes(host)) throw new Error('Unknown agent host');
+  if (!['codex', 'workbuddy', 'codebuddy', 'claude', 'cursor', 'gemini'].includes(host)) throw new Error('Unknown agent host');
   const normalized = cloudTarget(cloud);
   const existing = await optionalJson(root, BINDING);
   if (existing && (existing.cloud.endpoint !== normalized.endpoint || existing.cloud.folderId !== normalized.folderId)) throw new Error('Project is already bound to another cloud directory');
   const binding = { format: 1, autoSync: true, host, cloud: normalized };
   await atomicJson(root, BINDING, binding);
-  const rules = await safePath(root, 'AGENTS.md');
-  let previous = '';
-  try { previous = await readFile(rules, 'utf8'); } catch (error) { if (!missing(error)) throw error; }
-  if (!previous.includes(BLOCK)) await writeFile(rules, previous + (previous.endsWith('\n') || !previous ? '' : '\n') + '\n' + RULE);
-  if (host === 'workbuddy') {
-    const rulePath = await safePath(root, '.codebuddy/rules/babelbird-sync.md');
+  const ruleFiles = ['AGENTS.md', ...(host === 'claude' ? ['CLAUDE.md'] : host === 'gemini' ? ['GEMINI.md'] : [])];
+  for (const name of ruleFiles) {
+    const rules = await safePath(root, name);
+    let previous = '';
+    try { previous = await readFile(rules, 'utf8'); } catch (error) { if (!missing(error)) throw error; }
+    if (!previous.includes(BLOCK)) await writeFile(rules, previous + (previous.endsWith('\n') || !previous ? '' : '\n') + '\n' + RULE);
+  }
+  if (['workbuddy', 'codebuddy', 'cursor'].includes(host)) {
+    const rulePath = await safePath(root, host === 'cursor' ? '.cursor/rules/babelbird-sync.mdc' : '.codebuddy/rules/babelbird-sync.md');
     await mkdir(dirname(rulePath), { recursive: true });
     try { await writeFile(rulePath, '---\nalwaysApply: true\nenabled: true\n---\n\n' + RULE, { flag: 'wx' }); }
     catch (error) { if (error.code !== 'EEXIST') throw error; }
@@ -256,7 +259,7 @@ export async function run(input) {
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(await realpath(process.argv[1])).href) {
   try {
     const chunks = [];
     for await (const chunk of process.stdin) chunks.push(chunk);

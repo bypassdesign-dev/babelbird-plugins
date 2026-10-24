@@ -8,3 +8,4 @@ __pycache__/
 *.pem
 credentials.json
 secrets/
+.omo/evidence/

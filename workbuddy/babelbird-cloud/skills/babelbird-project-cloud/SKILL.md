@@ -4,7 +4,7 @@ description: Use when setting up BabelBird project sync, binding or restoring a 
 display_name: "项目云端同步巴别鸟插件"
 description_zh: "配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。"
 description_en: "After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms."
-version: "0.4.1"
+version: "0.5.0"
 author: "bypassdesign-dev"
 ---
 
@@ -16,9 +16,9 @@ author: "bypassdesign-dev"
 
 ## 首次使用：填写 API Key
 
-首次使用必须先要求用户填写自己的巴别鸟 API Key。提示中提供 [官方获取教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)，具体步骤见 [获取 API Key](references/api-key.md)。这里需要 APP 详情上方的 APIKey，不是 APP Key 或 APP Secret。
+首次使用先检查当前已加载的巴别鸟 MCP；有效时复用并只读验证，不重复要求填写。缺少凭据时主动执行 `babelbird-setup`，按实际宿主 ID（`codex`、`workbuddy`、`codebuddy`、`claude`、`cursor`、`gemini`）打开同机中英文单密码框页面，分享返回的 URL，并以 `--host <id> --wait` 自动等待结果，每次最多 25 秒，不要求额外回复“已填写”。页面检查成功和宿主已加载 MCP 分别验证；WorkBuddy 第三方 MCP 权限由用户在应用内批准。
 
-读取 [首次配置流程](references/setup.md#首次配置流程) 和 [API Key 填写入口](references/credential-entry.md)，给出实际宿主的菜单、字段、填写内容与保存后的下一步，不能只提示“去私密入口填写”。安装后缺少凭据时主动进入首次设置引导。用户已提供或登记过凭据时直接复用，不重复索要；普通超时不等于密钥失效。只有明确凭据无效或用户更换账号／密钥时，才重新填写。真实密钥不得放进工程或分发包。
+读取 [首次配置流程](references/setup.md#首次配置流程) 和 [API Key 填写入口](references/credential-entry.md)。需要获取 Key 时使用 [官方教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html) 与 [获取步骤](references/api-key.md)：需要应用详情里的 APIKey，不是 APP Key 或 APP Secret。普通超时不代表密钥失效；仅明确无效或更换账号／密钥时重新填写。手工配置只作本地页不可用的备用方案，真实密钥不得进入聊天、工程或分发包。
 
 ## 连接与能力
 
@@ -32,7 +32,7 @@ author: "bypassdesign-dev"
 
 按 [同步执行流程](references/sync.md) 使用随包的 Node.js 20+ 脚本建立绑定、扫描文件、计算增量、传输字节与记录基线。MCP 调用使用宿主已有连接，脚本不读取 API Key；临时传输凭据只经标准输入传入，不落到工程。
 
-首次配置后，用户要求启用工程同步且当前工程明确时建立绑定；后续在每次任务编辑前拉取云端更新、每批修改完成后自动上传本地变更，无须每次再说“保存”。绑定会保存本地目标引用并追加项目规则，保留已有规则。没有确定工程时只完成连接配置；明确只读测试时不创建目录、不绑定、不上传。
+首次配置后，用户要求启用工程同步且当前工程明确时建立绑定；后续在每次任务编辑前拉取云端更新、每批修改完成后自动上传本地变更，任务结束前复查，无须每次再说“保存”。绑定会保存本地目标引用并追加项目规则，保留已有规则。没有确定工程时只完成连接配置；明确只读测试时不创建目录、不绑定、不上传。
 
 已存在 `.babelbird-sync.json` 时始终复用它的云端目录，不因换设备、换模型或换宿主改为新的默认位置。用户可指定任意有权访问的既有工程目录并下载到新本地目录；例如 WorkBuddy 继续使用 `/个人文件/codex/网站改版/`。绑定不同目录前先处理旧绑定及待同步改动，不静默重绑。
 
@@ -46,6 +46,10 @@ author: "bypassdesign-dev"
 | --- | --- |
 | Codex | `/个人文件/codex/<工程名>/` |
 | WorkBuddy | `/个人文件/workbuddy/<工程名>/` |
+| CodeBuddy CLI | `/个人文件/codebuddy/<工程名>/` |
+| Claude Code | `/个人文件/claude/<工程名>/` |
+| Cursor | `/个人文件/cursor/<工程名>/` |
+| Gemini CLI | `/个人文件/gemini/<工程名>/` |
 
 按实际应用识别宿主，不按模型名、工程内容或对话中提到的产品名判断。用户明确指定的云端目录优先，直接作为工程根目录，不再追加宿主或工程名。其他宿主或宿主无法确定时，询问目标目录，不猜测分区。
 

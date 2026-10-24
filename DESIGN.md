@@ -2,7 +2,7 @@
 
 ## Purpose and structure
 
-A small, plain Chinese connection form for novice users, following the user-approved one-field design. One document scroll owner, one main panel (maximum 480px), one primary action. No navigation, marketing panels, illustrations or external fonts. Product research and decorative concept generation would widen this explicitly simple setup task; the approved copy and existing BabelBird identity are the reference.
+A small Chinese/English connection form for novice users, following the user-approved one-field design. One document scroll owner, one main panel (maximum 480px), one primary action. No navigation, marketing panels, illustrations or external fonts. Product research and decorative concept generation would widen this explicitly simple setup task; the approved copy and existing BabelBird identity are the reference.
 
 ## Tokens
 
@@ -12,7 +12,7 @@ Light: page #f5f7fa, panel #ffffff, ink #172b4d, muted #526278, line #d7dee8, ac
 
 ## Components and states
 
-Heading, short introduction, labeled password field, full-width submit button, inline live status, small acquisition link. Invalid, checking, saving, connected, unavailable and expired states use text; color never carries the only signal. The button disables while submitting. A failed request re-enables it and retains the field for retry; success clears the field and replaces the form with the result. No key is echoed in the result.
+Heading, short introduction, labeled password field, full-width submit button, inline live status, small acquisition link. A compact language button uses the helper type size, existing spacing tokens and a 48px hit target; it changes text without changing the entered key. Browser language chooses the initial Chinese or English text. Host identity is read from the local server; the user does not choose technical configuration. Invalid, checking, saving, connected, unavailable and expired states use text; color never carries the only signal. The button disables while submitting. A failed request re-enables it and retains the field for retry; success clears the field and replaces the form with the result. No key is echoed in the result.
 
 ## Responsive and accessibility
 
@@ -20,4 +20,4 @@ Layout uses min-height:100dvh, panel width:min(100%,480px), 24px page gutter and
 
 ## QA and accepted limits
 
-Observe empty/error/loading/success in a real browser and capture desktop/narrow surfaces. No third-party network requests from the page. This page configures Codex on the same computer; remote-headless sessions receive an explicit local-host limitation rather than a misleading success claim. Browser opening varies by host, so the agent always includes a clickable fallback link.
+Observe empty/error/loading/success in a real browser and capture desktop/narrow surfaces in both languages. No third-party network requests from the page. The page configures the selected supported host on the same computer; remote-headless sessions receive an explicit local-host limitation rather than a misleading success claim. Browser opening varies by host, so the agent always includes a clickable fallback link. Completion distinguishes a saved, checked connection from tools loaded by the host; WorkBuddy may require its native MCP permission confirmation.
