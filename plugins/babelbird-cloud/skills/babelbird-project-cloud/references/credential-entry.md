@@ -74,6 +74,6 @@ GitHub 连接器包尚未上架 WorkBuddy 市场，所以当前不能要求用�
 
 ## 安装后没有打开页面
 
-直接告诉智能体“打开巴别鸟密钥填写页面”。Codex 0.4.0 的安装智能体应运行助手并给出可点击入口；它是本机浏览器页面，不是原生安装密码框。只在实际无法运行页面时采用上述备用方法。
+直接告诉智能体“打开巴别鸟密钥填写页面”。Codex 0.4.1 的安装智能体应运行助手并给出可点击入口；它是本机浏览器页面，不是原生安装密码框。只在实际无法运行页面时采用上述备用方法。
 
 参考：[Codex MCP 配置](https://learn.chatgpt.com/docs/extend/mcp?surface=cli)、[Codex 插件安装引导](https://developers.openai.com/plugins/build/plugins)、[WorkBuddy 连接器](https://open.workbuddy.cn/docs/connector)。

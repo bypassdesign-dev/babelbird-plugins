@@ -4,7 +4,7 @@ description: Use when installing BabelBird from its GitHub link, continuing setu
 display_name: "巴别鸟首次设置"
 description_zh: "首次配置巴别鸟 API Key，验证连接并启用工程自动同步。"
 description_en: "Configure a BabelBird API Key and enable project sync."
-version: "0.3.1"
+version: "0.4.1"
 author: "bypassdesign-dev"
 disable-model-invocation: false
 ---
@@ -21,6 +21,6 @@ disable-model-invocation: false
 5. 分别报告“凭据已填写”“客户端可读取”“只读测试通过”的实际状态，报告中不出现密钥或鉴权头。配置引用可保存在宿主用户私有配置区，不能保存到工程或插件中。
 6. 只读检查到此完成；用户明确只要求连接测试时停止。用户启用工程自动同步时，当前工程明确则进入 `babelbird-project-cloud`，按实际宿主的默认目录或用户指定目录建立绑定并执行首次同步；没有明确工程时只补问工程位置。绑定后任务前拉取、每批修改后上传，任务结束前复查，跨平台继续复用同一目录。
 
-插件内置 MCP 可使用环境变量；桌面用户也可按填写入口文档选择用户级个人连接。个人连接验证通过后，仅关闭内置重复 MCP 入口并保留 Skill，不关闭整个插件、不写入项目配置、不删除旧连接。使用实际发现的工具名称，不要求服务必须叫 babelBird。
+插件内置 MCP 可使用环境变量；桌面用户也可按填写入口文档选择用户级个人连接。个人连接验证通过后，保留 Skill、已有连接及其启用状态；不因新增连接就关闭旧 MCP，旧连接可能属于另一个账号。不把插件鉴权密钥写入项目配置。使用实际发现的工具名称，不要求服务必须叫 babelBird。
 
 交接时分别说明插件安装、凭据配置、只读连接三项的真实状态。缺少填写或重启时给出唯一明确的下一步；不能以“插件已安装”代替“可开始同步”。
