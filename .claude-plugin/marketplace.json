@@ -7,8 +7,8 @@
     {
       "name": "babelbird-cloud",
       "source": "./plugins/babelbird-cloud",
-      "description": "巴别鸟工程文件保存与恢复，首次使用填写个人 API Key",
-      "version": "0.4.0"
+      "description": "配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。 / Sync Codex/WorkBuddy projects to BabelBird and restore them across devices and agents.",
+      "version": "0.4.1"
     }
   ]
 }

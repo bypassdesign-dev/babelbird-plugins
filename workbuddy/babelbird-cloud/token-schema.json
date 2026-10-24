@@ -1,6 +1,6 @@
 {
-  "title": "连接巴别鸟工程存储",
-  "title_en": "Connect BabelBird",
+  "title": "连接项目云端同步巴别鸟插件",
+  "title_en": "Connect BabelBird Project Cloud Sync",
   "description": "填写你自己的 API Key。WorkBuddy 将凭据保存在本机，并在连接巴别鸟时注入认证请求头。",
   "description_en": "Enter your API Key. WorkBuddy stores it locally and injects it into requests to BabelBird.",
   "docUrl": "https://www.babel.cc/public/babelwiki/zh/mcp-integration.html",
@@ -10,10 +10,13 @@
     {
       "key": "BABELBIRD_API_KEY",
       "label": "巴别鸟 API Key",
+      "label_en": "BabelBird API Key",
       "type": "password",
       "required": true,
       "placeholder": "设置 > API秘钥 > 对应 APP > APIKey",
-      "description": "复制详情页上方的 APIKey，不是 APP Key 或 APP Secret。密钥范围需覆盖目标工程目录。"
+      "placeholder_en": "Settings > API keys > your app > APIKey",
+      "description": "复制详情页上方的 APIKey，不是 APP Key 或 APP Secret。密钥范围需覆盖目标工程目录。",
+      "description_en": "Copy APIKey at the top of the app details, not APP Key or APP Secret. Grant access to your project folder."
     }
   ]
 }

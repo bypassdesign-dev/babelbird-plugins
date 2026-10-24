@@ -1,4 +1,4 @@
-# WorkBuddy 巴别鸟连接器 0.3.1
+# 项目云端同步巴别鸟插件 · WorkBuddy 0.4.1
 
 使用 WorkBuddy 官方的 MCP + Skill 格式，最低版本 4.24.0。两项 Skill 与 Codex 共用同步行为，包含 Node.js 20+ 的增量规划和字节传输脚本。
 

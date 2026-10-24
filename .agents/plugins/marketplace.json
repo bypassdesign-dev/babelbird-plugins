@@ -1,7 +1,7 @@
 {
   "name": "babelbird-local",
   "interface": {
-    "displayName": "巴别鸟工程云存储"
+    "displayName": "项目云端同步巴别鸟插件"
   },
   "plugins": [
     {

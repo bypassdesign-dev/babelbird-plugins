@@ -2,7 +2,7 @@
 name: babelbird-setup
 description: Install or connect BabelBird, open its local API Key form, and verify the MCP connection. Use for GitHub plugin installation, first setup, missing API Key, or changing a connection, including 安装巴别鸟、填写APIKEY、打开密钥页面、首次连接.
 metadata:
-  version: "0.4.0"
+  version: "0.4.1"
 ---
 
 # 巴别鸟首次设置

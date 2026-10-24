@@ -89,7 +89,7 @@ export async function verifyConnection(apiKey, { fetchImpl = fetch, timeoutMs = 
     return reply.result;
   }
   try {
-    const initialized = await rpc('initialize', { protocolVersion: protocol, capabilities: {}, clientInfo: { name: 'babelbird-setup', version: '0.4.0' } });
+    const initialized = await rpc('initialize', { protocolVersion: protocol, capabilities: {}, clientInfo: { name: 'babelbird-setup', version: '0.4.1' } });
     protocol = initialized.protocolVersion || protocol;
     await rpc('notifications/initialized', {}, true);
     const folder = businessResult(await rpc('tools/call', { name: 'getFileInfoByPath', arguments: { namePath: '/个人文件' } }));

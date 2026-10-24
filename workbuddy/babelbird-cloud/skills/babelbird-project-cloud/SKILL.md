@@ -1,16 +1,18 @@
 ---
 name: babelbird-project-cloud
 description: Use when setting up BabelBird project sync, binding or restoring a cloud project, or starting and finishing work in a project with .babelbird-sync.json, including 巴别鸟自动保存、跨设备或跨智能体同步工程. Requires local file access and authenticated BabelBird MCP.
-display_name: "巴别鸟工程同步"
-description_zh: "自动同步工程文件，绑定云端目录并跨设备、跨智能体继续工作。"
-description_en: "Sync project files and resume a cloud project across devices and agents."
-version: "0.3.1"
+display_name: "项目云端同步巴别鸟插件"
+description_zh: "配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。"
+description_en: "After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms."
+version: "0.4.1"
 author: "bypassdesign-dev"
 ---
 
-# 巴别鸟工程云存储
+# 项目云端同步巴别鸟插件 / BabelBird Project Cloud Sync
 
 将用户指定的工程按原目录结构逐文件保存到巴别鸟，或下载到本地继续工作。工程不压缩成 ZIP，不改写源码和原文件名；宿主负责读写本地文件和传输字节，MCP 负责定位云端目录并申请传输地址。
+
+用户允许将工程自身的配置（例如 .mcp.json）保存在其指定的私有云端工程中。遵循脚本的排除清单和 Git 忽略规则；不要把宿主全局凭据或本插件的 API Key 复制进工程。使用用户当前语言引导与报告。
 
 ## 首次使用：填写 API Key
 

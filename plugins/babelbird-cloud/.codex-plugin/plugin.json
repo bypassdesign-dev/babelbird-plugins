@@ -1,17 +1,22 @@
 {
   "name": "babelbird-cloud",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": {
     "name": "bypassdesign-dev"
   },
   "repository": "https://github.com/bypassdesign-dev/babelbird-plugins",
-  "description": "巴别鸟工程文件云存储：首次配置个人 API Key，保存、校验并恢复工程文件。",
+  "description": "配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。",
   "skills": "./skills/",
   "mcpServers": "./mcp.codex.json",
   "interface": {
-    "displayName": "巴别鸟工程云存储",
-    "shortDescription": "安装后自动打开密钥页面，只填一次 API Key",
-    "longDescription": "提供首次连接引导和工程文件保存、下载、校验、恢复流程。需要用户自己的巴别鸟 API Key；实际传输取决于服务端可用性与上传协议。",
+    "displayName": "项目云端同步巴别鸟插件",
+    "shortDescription": "工程文件跨设备、跨智能体同步",
+    "longDescription": "配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。\n\nBabelBird Project Cloud Sync: After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms.\n\n同步在工程绑定后的智能体任务期间执行，保留原始文件和目录，不压缩工程。Codex 安装后打开本地 API Key 页面；WorkBuddy 使用独立连接器，实机安装验证仍待完成。需要 Node.js 20+、可用的网络和个人 API Key。\nSync runs during agent tasks after a project is bound. Files keep their original structure without ZIP archives. Codex opens a local API Key form; WorkBuddy uses a separate connector whose installation is not yet validated in the app. Node.js 20+, network access and a personal API Key are required.",
+    "developerName": "bypassdesign-dev",
+    "websiteURL": "https://github.com/bypassdesign-dev/babelbird-plugins",
+    "supportURL": "https://github.com/bypassdesign-dev/babelbird-plugins/issues",
+    "logo": "./assets/icon.svg",
+    "composerIcon": "./assets/icon.svg",
     "category": "Productivity",
     "capabilities": [
       "Read",
@@ -24,7 +29,19 @@
   },
   "extensions": {
     "com.openai": {
-      "onboardingSkill": "./skills/babelbird-setup/SKILL.md"
+      "onboardingSkill": "./skills/babelbird-setup/SKILL.md",
+      "publication": {
+        "translations": {
+          "zh-CN": {
+            "subtitle": "工程文件跨设备、跨智能体同步",
+            "description": "配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。同步在绑定工程后的智能体任务期间执行，需要网络和 Node.js 20+；WorkBuddy 安装尚未实机验证。"
+          },
+          "en-US": {
+            "subtitle": "Sync projects across devices",
+            "description": "After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms. Sync runs during agent tasks after binding a project. Network access and Node.js 20+ are required. WorkBuddy installation has not yet been validated in the app."
+          }
+        }
+      }
     }
   }
 }

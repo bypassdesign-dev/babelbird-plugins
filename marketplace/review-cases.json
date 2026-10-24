@@ -1,0 +1,54 @@
+{
+  "positive": [
+    {
+      "description": "Configure a personal account and verify read access without uploading project files.",
+      "prompt": "Install the plugin and help me enter my API Key privately. Only check the connection.",
+      "tools_triggered": "getFileInfoByPath, listFolder; local Codex setup helper",
+      "expected_behavior": "The agent opens the local setup page, waits for entry, verifies Personal Files and a directory page, saves a private connection and reports whether the current host has loaded it. No upload or folder creation."
+    },
+    {
+      "description": "Bind and upload a small sample project with original paths.",
+      "prompt": "Enable BabelBird synchronization for the demo-project folder.",
+      "tools_triggered": "getFileInfoByPath, listFolder, createFolder when needed, getUploadUrl, getDownloadUrl; project-sync helper",
+      "expected_behavior": "The new project is stored under Personal Files/codex on Codex or Personal Files/workbuddy on WorkBuddy, with original file paths and no ZIP. Uploaded bytes are downloaded and their SHA-256 is checked before recording a baseline."
+    },
+    {
+      "description": "Upload a local-only edit without creating duplicate files.",
+      "prompt": "Change the sample greeting to Hello cloud, then save the completed batch.",
+      "tools_triggered": "listFolder, getFileInfoByPath, getUploadUrl, getDownloadUrl; project-sync helper",
+      "expected_behavior": "The existing remote file is rechecked and updated by fileId. The agent verifies downloaded bytes and records the completed update without overwriting a concurrent change."
+    },
+    {
+      "description": "Restore into a new local directory and reuse the original cloud project across hosts.",
+      "prompt": "Download the existing Personal Files/codex/demo-project into a new local folder and continue syncing it here.",
+      "tools_triggered": "getFileInfoByPath, listFolder, getDownloadUrl; project-sync helper",
+      "expected_behavior": "The same cloud folder is bound; no duplicate workbuddy partition is created for an existing Codex project. Original relative paths and verified bytes are restored. Unknown original permission bits are reported rather than guessed."
+    },
+    {
+      "description": "Apply a remote-only update while retaining local executable or private permissions.",
+      "prompt": "Pull the cloud update to my unchanged local script and private configuration.",
+      "tools_triggered": "listFolder, getFileInfoByPath, getDownloadUrl; project-sync helper",
+      "expected_behavior": "On macOS/Linux, local files retain their original 0755 or 0600 permissions after verified replacement. The agent does not recursively chmod the project. WorkBuddy and Windows acceptance must be recorded separately."
+    }
+  ],
+  "negative": [
+    {
+      "description": "Both endpoints changed the same file since the common baseline.",
+      "prompt": "Sync this project; both this computer and the cloud changed the greeting.",
+      "tools_triggered": "listFolder, getDownloadUrl for inspection when needed; project-sync helper",
+      "expected_behavior": "Keep both versions, report a conflict and request a version choice or merge. Do not overwrite either version automatically."
+    },
+    {
+      "description": "Invalid API Key or target-folder permission denied.",
+      "prompt": "Connect using an invalid or insufficiently scoped API Key.",
+      "tools_triggered": "getFileInfoByPath and listFolder only as permitted; local setup helper",
+      "expected_behavior": "Report an authentication or directory-access error without saving a failed new connection, printing the key, removing existing accounts or claiming success. General timeouts do not imply an invalid key."
+    },
+    {
+      "description": "Git-ignored files in a bound repository subdirectory.",
+      "prompt": "Sync the demo package subdirectory using the project's normal ignore rules.",
+      "tools_triggered": "project-sync scan/plan; no getUploadUrl for excluded files",
+      "expected_behavior": "Apply parent repository ignore rules; omit ignored untracked files and report exclusions. Project configuration that is not excluded, such as .mcp.json, remains eligible. Global host credentials are never copied into the project."
+    }
+  ]
+}

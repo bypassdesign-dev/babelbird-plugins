@@ -9,7 +9,7 @@
 Codex 支持 `codex plugin` 时执行：
 
 ```bash
-codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.4.0
+codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.4.1
 codex plugin add babelbird-cloud@babelbird-local
 ```
 

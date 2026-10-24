@@ -1,4 +1,10 @@
-# 巴别鸟工程云存储插件 0.4.0
+# 项目云端同步巴别鸟插件 0.4.1
+
+[English](README.en.md) · [上线材料](marketplace/README.md) · [更新记录](CHANGELOG.md)
+
+配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。
+
+英文名称：**BabelBird Project Cloud Sync**。本版继续作为测试版发布，已验证范围与未完成项目见 [验证记录](VALIDATION.md)。
 
 将工程按原文件和目录结构保存到巴别鸟，并在智能体任务开始前拉取更新、每批修改完成后自动上传。工程不打包成 ZIP。支持 Codex / Claude Code 插件适配及 WorkBuddy 专用连接器包；每位用户使用自己的 API Key，包内不含真实密钥。
 
@@ -6,7 +12,7 @@
 
 把这一句交给 Codex：
 
-> 帮我安装 https://github.com/bypassdesign-dev/babelbird-plugins/tree/v0.4.0
+> 帮我安装 https://github.com/bypassdesign-dev/babelbird-plugins/tree/v0.4.1
 
 智能体安装后会自动打开“连接巴别鸟”本地页面。**粘贴 API Key → 点击“保存并连接”**，即可自动检查连接和保存配置，不需要找 MCP 菜单或填写请求头。页面上也有“打开巴别鸟获取”按钮。
 
@@ -39,7 +45,7 @@
 普通用户直接把上面的链接交给智能体。以下命令供安装智能体执行：
 
 ```bash
-codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.4.0
+codex plugin marketplace add bypassdesign-dev/babelbird-plugins --ref v0.4.1
 codex plugin add babelbird-cloud@babelbird-local
 ```
 
@@ -79,9 +85,15 @@ WorkBuddy 官方支持 [MCP + Skill 连接器及 API Key 表单](https://open.wo
 
 本地单侧修改上传，云端单侧修改下载；同时修改或没有共同基线的不同内容会保留双方并报告冲突。删除不自动传播。断网保留本地修改，恢复后重新比较；部分失败不声称整体成功。默认排除密钥、缓存、依赖和符号链接。
 
+工程自身的配置文件（例如 .mcp.json）可以保存到你指定的云端工程，仍遵循 Git 忽略规则。插件登录密钥留在宿主私有配置中。Git 子目录绑定也会读取父仓库的忽略规则。
+
+macOS/Linux 下载更新已有文件时保留原权限，脚本原来是 755 就仍是 755，私密配置原来是 600 就仍是 600。新设备首次下载时，没有权限记录的文件使用本机默认权限；已确认可执行的文件可单独恢复为 755，不对整个项目统一加执行权限。
+
+中英文名称、简介、市场文案及 WorkBuddy 密钥表单已提供。Codex 本地密钥页当前为中文；可让智能体用自己的语言逐步引导。平台如何展示翻译取决于宿主，详见 [国际化说明](marketplace/listing.md)。
+
 ## 验证与限制
 
-公有云已完成新增、更新、下载 SHA-256 回读，以及两份本地工程之间的跨宿主往返同步和冲突保留。本版 24 项可执行测试通过，包含原有 10 项同步回归；Codex 本地页完成了真实密钥填写、只读连接和重启后的 MCP 验证，具体记录见 [VALIDATION.md](VALIDATION.md)。长批量直接 MCP 调用仍观察到 403，原因未确定，本版以测试版发布，遇此错误保留进度并报告待同步项。
+本版 31 项可执行测试通过，并完成真实公有云上传、下载 SHA-256 回读和 755/700/600/644 权限保留实测。此前已完成跨本地工程往返同步、冲突保留，以及 Codex 本地页真实密钥填写和重启后的 MCP 验证；具体版本与范围见 [VALIDATION.md](VALIDATION.md)。历史长批量直接 MCP 调用曾出现 403，原因未确定，本版以测试版发布，遇此错误保留进度并报告待同步项。
 
 逐文件更新不是全工程原子提交；服务端尚未提供原子条件写入或跨设备锁，同一文件应在一端同步完成后再换端继续。自动触发由智能体和宿主项目规则执行；未加载规则、离线或未提供 Node.js 运行时时无法自动同步。WorkBuddy 的安装与表单未做 UI 实测。
 

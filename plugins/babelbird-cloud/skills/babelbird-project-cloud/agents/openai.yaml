@@ -1,4 +1,4 @@
 interface:
-  display_name: "巴别鸟工程云存储"
-  short_description: "将智能体工程文件保存到巴别鸟，并支持工程文件校验与跨设备恢复"
+  display_name: "项目云端同步巴别鸟插件"
+  short_description: "自动同步 Codex/WorkBuddy 工程，支持跨设备和跨智能体恢复"
   default_prompt: "使用 $babelbird-cloud:babelbird-project-cloud 将当前工程按目录逐文件保存到巴别鸟的个人文件/codex/工程名，并报告保存与校验结果。"

@@ -1,5 +1,19 @@
 # 验证记录
 
+## 0.4.1 发布自检与权限修复
+
+日期：2026-10-24。macOS，本机 Node.js 24.19.0。版本仍为 GitHub 测试版；本次不等于市场审核通过。
+
+- 先用新增回归复现 Git 子目录忽略失效，以及 755/700/600 下载后变为 644；修复后全量 31 项测试通过，零失败、零跳过。测试覆盖既有权限保留、已知新文件权限恢复、拒绝特殊权限位和冲突不覆盖。
+- 真实 BabelBird MCP 在个人文件/codex 下创建独立的 plugin-release-041-permission-test-20261024 测试目录，上传 65 字节合成脚本。用真实下载地址分别更新本地 755、700、600、644 文件，内容 SHA-256 均为 a2a2b444103963d5b24250ef197ceee979fa8961d42bb1e5e71d507fded8cc8f，权限保持不变；新文件明确指定 0755 也成功。测试只上传合成脚本，不包含用户工程或密钥。云端测试样本保留供核对。
+- Codex 原生 plugin/read 成功识别 0.4.1、新中文名称、图标、两项 Skill 和 onboardingSkill；这是原生包解析检查，不冒充重新执行完整安装对话。
+- 两项 Codex Skill 验证通过，四项 Skill frontmatter 与两份 agents YAML 可解析；JSON、相对文档链接、名称长度、WorkBuddy 密码项与 MCP 占位符匹配通过。Codex/WorkBuddy 同步脚本一致。工作树及 Git 历史未检出已知 Key 或 BabelBird Key 格式。
+- 工程自身配置进入云端清单按用户选择接受；Git 忽略规则和默认排除仍有效。首次配置说明统一为保留已有账号连接及其启用状态。
+
+权限修复仅涵盖普通 POSIX 权限位；云端不携带权限元数据，无法在新设备上自动推断未知执行位，也不复制 Windows ACL。WorkBuddy 安装与 Token 表单、Claude Code、Windows/Linux 尚无本轮实机验收；Codex 密钥页本轮未改动，真实页面录入证据沿用下方 0.4.0 记录，未重新要求用户填写密钥。
+
+市场准备材料及剩余条件见 [marketplace/README.md](marketplace/README.md)。特别是 OpenAI 提交入口当前不提供 API Key 连接流程，需先与平台确认支持方案；审核专用账号、视频和正式政策尚未完成，不宣称可立即提交审核。
+
 ## 0.4.0 本地 API Key 页面
 
 日期：2026-10-23。环境：macOS，Node.js 24.19.0，Codex CLI / app-server 0.163.0-alpha.11.2。新功能需要 Node.js 20+。WorkBuddy 包保留原有人工连接器入口，本版没有实现其自动填写页面。

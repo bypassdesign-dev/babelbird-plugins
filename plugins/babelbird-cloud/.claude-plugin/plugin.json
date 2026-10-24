@@ -1,17 +1,17 @@
 {
   "name": "babelbird-cloud",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": {
     "name": "bypassdesign-dev"
   },
   "repository": "https://github.com/bypassdesign-dev/babelbird-plugins",
-  "description": "巴别鸟工程文件云存储，包含首次连接引导及工程文件保存、校验和恢复流程。",
+  "description": "项目云端同步巴别鸟插件 / BabelBird Project Cloud Sync。配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。 Sync project files to BabelBird and restore them across devices and agents.",
   "mcpServers": "./mcp.claude.json",
   "userConfig": {
     "api_key": {
       "type": "string",
-      "title": "巴别鸟 API Key",
-      "description": "在巴别鸟“设置 > API秘钥”复制应用的 APIKey；不是 APP Key 或 APP Secret。 获取教程：https://www.babel.cc/public/babelwiki/zh/mcp-integration.html",
+      "title": "巴别鸟 / BabelBird API Key",
+      "description": "在巴别鸟“设置 > API秘钥”复制应用的 APIKey；不是 APP Key 或 APP Secret。 Copy APIKey from BabelBird Settings > API keys, not APP Key or APP Secret. https://www.babel.cc/public/babelwiki/zh/mcp-integration.html",
       "required": true,
       "sensitive": true
     }
