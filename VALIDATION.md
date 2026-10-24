@@ -10,6 +10,7 @@
 - Codex 原生配置接口保存成功，`mcp list --json` 可读取新连接。WorkBuddy 输出可由严格 JSON.parse 读取；其自带 CodeBuddy CLI 在隔离配置下运行 `mcp list`，报告 HTTP 服务 Connected。CLI 连接检查不代替 WorkBuddy 桌面原生授权或完整智能体对话。
 - 干净 Codex CLI 会话只收到候选 GitHub 分支链接和“帮我安装这个插件”：主动获取 0.5.0，执行统一安装器，打开页面、提供填写链接并自动等待；真实浏览器提交后自动确认成功并提示重新加载会话，无需额外发送“已填写”。候选代码提交为 99bb25f；发布前后仅补充验证记录和说明。
 - 重新启动该隔离 Codex 会话后，实际 `babelBirdPersonal` 工具执行 `getFileInfoByPath` 与 `listFolder`，两次都返回 `code: 0`、`success: true`。没有用页面直连结果替代宿主工具验证。
+- 发布后再以原始 `https://github.com/bypassdesign-dev/babelbird-plugins#readme` 和“帮我安装这个插件”启动全新 Codex 会话：正确获取已发布的 v0.5.0，自动启动填写页、提供链接并等待；真实页面提交后自动确认连接成功并提示重新加载。**本轮仓库首页链接的新手流程通过**，不沿用下方 0.4.0 的旧缓存失败结论。网页缓存由宿主管理，需要固定版本时可使用 `/tree/v0.5.0`。
 - 两项 Codex Skill 验证通过；原生 plugin/read 识别 0.5.0、两项 Skill 和 onboardingSkill。包内 JSON、相对文档链接和已知真实 Key 排查通过。两份安装助手、页面和同步脚本一致。
 
 | 宿主 | 安装与配置适配检查 | 真实填写页及云端目录检查 | 宿主实际验证范围 |
