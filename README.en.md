@@ -8,6 +8,16 @@ After setup, automatically sync local Codex/WorkBuddy project files to BabelBird
 
 Chinese product name: **项目云端同步巴别鸟插件**. This is a GitHub prerelease. Installation adapters cover Codex, WorkBuddy, CodeBuddy CLI, Claude Code, Cursor and Gemini CLI; adapter support does not mean every client has passed end-to-end testing.
 
+## What this plugin is for
+
+**Sync an agent's local project folder to BabelBird and continue the same work on another device or agent.** Save code and documents, restore projects on a new computer, continue a Codex project in WorkBuddy, and preserve project knowledge or AI memory written into files.
+
+MCP supplies cloud file-access tools. This plugin and its Skills manage project bindings, downloads, uploads, and conflicts. Connecting MCP alone does not enable automatic project sync.
+
+File-based AI memory means eligible project notes, instructions, task records, and memory files. It does not automatically migrate chat history, transient model context, or private application databases. Ask the destination agent to read the restored files before continuing.
+
+Start with **[the beginner guide and four use cases](docs/GETTING_STARTED.md#english)** for installation, API Key entry, enabling sync, and restoring an existing project.
+
 ## Install with one instruction
 
 Tell your current agent:
