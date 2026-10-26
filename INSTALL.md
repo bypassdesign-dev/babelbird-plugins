@@ -1,22 +1,22 @@
-# GitHub 安装与首次连接（0.5.0）
+# GitHub 安装与首次连接（0.5.1）
 
 收到本仓库链接和“帮我安装”时执行完整流程。用户只询问信息、只下载、离线安装或稍后配置时尊重其范围。
 
-## Meta Muse / today.ai 实验分支
+## Today / Meta Muse 实验适配
 
-若当前产品是 Meta Muse 个人智能体或 today.ai，先读 [平台原生安装引导](plugins/babelbird-cloud/skills/babelbird-setup/references/personal-agents.md)。本分支提供 `muse` / `today` 的 Skills 安装与工程绑定实验支持；**尚未完成平台凭据表单、工具加载及传输的实机验收**。不要执行下方桌面客户端的本地页面流程，也不要改用 Muse Code 配置。
+若当前产品是 Today 或 Meta Muse 个人智能体，先读 [平台原生安装引导](plugins/babelbird-cloud/skills/babelbird-setup/references/personal-agents.md)。本版包含 `muse` / `today` 的实验安装与工程绑定；**不等于完整同步验收通过**。Today 中国版网页账号已观察到技能安装、密钥表单及“已连接”状态；首次连接需要手动完成。给 Today 用户直接提供 [安装与填写 API Key 说明](plugins/babelbird-cloud/skills/babelbird-setup/references/today-setup.md)。不要执行下方六款桌面宿主的本地页面流程，也不要改用 Muse Code 配置。
 
-由智能体查询平台 Skills 目录或使用原生导入工具。目录确认后可运行 `node install/install.mjs --host muse --skills-dir "<实际绝对目录>"`（today.ai 为 `--host today`）。安装器不猜目录、不写平台凭据文件；返回 `requires_platform_setup` 后必须继续打开原生凭据表单并检查实际连接。用户只填写 Key。平台能力不足则准确报告缺失项，不能把安装器返回值当成连接成功。实验验证保留当前明确指定的分支，不切换到不包含此适配的 v0.5.0。
+由智能体查询平台 Skills 目录或使用原生导入工具。目录确认后可运行 `node install/install.mjs --host muse --skills-dir "<实际绝对目录>"`（Today 为 `--host today`）。安装器不猜目录、不写平台凭据文件。返回 `requires_platform_setup` 后继续连接：有实际可用的原生工具则打开平台表单；Today 无法自动打开时，直接展示上述说明中的连接应用入口和可复制 JSON，带用户完成“粘贴代码添加 → 下一步 → Token → 添加”，不要只让用户自行寻找设置或声称已经弹窗。用户保存后继续实际目录检查；平台能力不足则准确报告缺失项。用户明确指定的 ref 必须保留，否则固定 v0.5.1。
 
 ## 1. 识别宿主并获取版本
 
 根据实际运行应用识别宿主，不按模型名猜测。支持 ID：`codex`、`workbuddy`、`codebuddy`、`claude`、`cursor`、`gemini`。路径与格式见 [支持的智能体](docs/SUPPORTED_AGENTS.md)。检查 Node.js 20+；Codex 还需可用的 Codex 可执行文件，由智能体定位。
 
-用户明确指定分支、tag 或 commit 时保留其 ref。否则默认固定 v0.5.0，不跟随默认分支或陈旧网页摘要。正式发布前在当前测试 ref 验证，不调用尚不存在的 tag。以下是智能体执行的正式安装示例，克隆到用户可写且不与既有工程冲突的位置：
+用户明确指定分支、tag 或 commit 时保留其 ref。否则默认固定 v0.5.1，不跟随默认分支或陈旧网页摘要。正式发布前在当前测试 ref 验证，不调用尚不存在的 tag。以下是智能体执行的正式安装示例，克隆到用户可写且不与既有工程冲突的位置：
 
 ```bash
-git clone --branch v0.5.0 --depth 1 https://github.com/bypassdesign-dev/babelbird-plugins.git babelbird-plugins-v0.5.0
-cd babelbird-plugins-v0.5.0
+git clone --branch v0.5.1 --depth 1 https://github.com/bypassdesign-dev/babelbird-plugins.git babelbird-plugins-v0.5.1
+cd babelbird-plugins-v0.5.1
 node install/install.mjs --host codex
 ```
 

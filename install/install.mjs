@@ -62,7 +62,7 @@ export async function installSkills(host, options = {}) {
       await cp(join(source, name), stage, { recursive: true, errorOnExist: true, force: false });
       if (name === 'babelbird-setup') await writeFile(join(stage, 'installed-host.json'), JSON.stringify({ host }) + '\n');
       const files = await hashes(stage);
-      await writeFile(join(stage, receiptName), JSON.stringify({ owner: 'bypassdesign-dev/babelbird-plugins', version: '0.5.0', files }) + '\n');
+      await writeFile(join(stage, receiptName), JSON.stringify({ owner: 'bypassdesign-dev/babelbird-plugins', version: '0.5.1', files }) + '\n');
     }
     for (let i = 0; i < names.length; i++) {
       const destination = join(paths.skills, names[i]);
@@ -74,7 +74,7 @@ export async function installSkills(host, options = {}) {
       if (exists) await rm(backup, { recursive: true });
     }
     return {
-      host, version: '0.5.0', skills: paths.skills,
+      host, version: '0.5.1', skills: paths.skills,
       ...(personal
         ? { stage: 'experimental', connectionMode: 'platform_credentials', setupGuide: join(paths.skills, 'babelbird-setup/references/personal-agents.md') }
         : { setupScript: join(paths.skills, 'babelbird-setup/scripts/setup-host.mjs') }),

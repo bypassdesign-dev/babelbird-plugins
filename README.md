@@ -1,12 +1,12 @@
-# 项目云端同步巴别鸟插件 0.5.0
+# 项目云端同步巴别鸟插件 0.5.1
 
 [English](README.en.md) · [支持的智能体](docs/SUPPORTED_AGENTS.md) · [更新记录](CHANGELOG.md)
 
-**当前开发分支：**正在适配 Meta Muse 个人智能体和 today.ai。已添加平台原生密钥流程的安装引导和工程绑定，仍待登录后的完整验收；不包含在已发布的 v0.5.0 支持范围内。[查看状态](docs/PERSONAL_AGENTS.md)。
+**Today 用户请先看 [Today 安装与填写 API Key](plugins/babelbird-cloud/skills/babelbird-setup/references/today-setup.md)。** Today 首次连接需要手动导入现成配置、填写一次 Key。中国版已观察到技能安装和“已连接”状态，工程同步仍待验收；Meta Muse 仍为实验适配。[查看验证范围](docs/PERSONAL_AGENTS.md)。
 
 配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟网盘，切换设备或智能体产品后也能同步回来。
 
-英文名称：**BabelBird Project Cloud Sync**。0.5.0 是 GitHub 测试版，安装适配支持 Codex、WorkBuddy、CodeBuddy CLI、Claude Code、Cursor 和 Gemini CLI；适配支持不等于每款客户端均已完成实机端到端验证，实际范围见 [验证记录](VALIDATION.md)。
+英文名称：**BabelBird Project Cloud Sync**。0.5.1 是 GitHub 测试版，安装适配支持 Codex、WorkBuddy、CodeBuddy CLI、Claude Code、Cursor 和 Gemini CLI；适配支持不等于每款客户端均已完成实机端到端验证，实际范围见 [验证记录](VALIDATION.md)。
 
 ## 只需一句安装指令
 
@@ -14,11 +14,11 @@
 
 > 帮我安装 https://github.com/bypassdesign-dev/babelbird-plugins ，并连接我的巴别鸟账号。
 
-智能体识别当前宿主、获取 v0.5.0，安装两项完整 Skill，并自动打开本机的中英文设置页。你只需在一个密码框中粘贴 API Key，点击“保存并连接 / Save and connect”。没有密钥时，点击页面上的获取入口。无需把密钥发到聊天，也无需回复“已填写”。
+在 Codex、WorkBuddy、CodeBuddy CLI、Claude Code、Cursor 和 Gemini CLI 中，智能体识别当前宿主、获取 v0.5.1，安装两项完整 Skill，并自动打开本机的中英文设置页。你只需在一个密码框中粘贴 API Key，点击“保存并连接 / Save and connect”。没有密钥时，点击页面上的获取入口。无需把密钥发到聊天，也无需回复“已填写”。
 
 浏览器没有自动打开时，点击智能体提供的“填写 API Key”链接。页面和浏览器必须运行在同一台电脑；安装需要 Node.js 20+。智能体会检查连接并保存到用户私有配置。如果当前客户端尚未加载新配置，按提示重启或重新打开会话，已有密钥直接复用。WorkBuddy 的第三方 MCP 权限需要你在应用内批准；插件不会自动批准。
 
-**给安装智能体：**先读 [INSTALL.md](INSTALL.md)。默认运行 `node install/install.mjs --host <id>`，分享返回的 URL，并通过返回的 `setupScript` 传入 `--host <id> --wait` 自动等待结果。不要只下载仓库就结束，不把手工 MCP 配置作为默认步骤。用户明确指定 ref 时保留该 ref；正式默认固定 v0.5.0，发布前验证使用当前测试 ref。
+**给安装智能体：**先读 [INSTALL.md](INSTALL.md) 并按宿主分流。Today 使用上述手动连接说明；Meta Muse 使用实验引导。六款桌面宿主默认运行 `node install/install.mjs --host <id>`，分享返回的 URL，并通过返回的 `setupScript` 传入 `--host <id> --wait` 自动等待结果。不要只下载仓库就结束，不把手工 MCP 配置作为默认步骤。用户明确指定 ref 时保留该 ref；正式默认固定 v0.5.1，发布前验证使用当前测试 ref。
 
 GitHub 安装器安装的是**用户级 Skills + MCP 组合**，不会在宿主原生插件菜单中注册插件。仓库仍保留 Codex / Claude Code 原生插件包和 WorkBuddy 连接器源码。原生市场审核与本次 GitHub 发布是独立流程。
 
@@ -45,7 +45,7 @@ GitHub 安装器安装的是**用户级 Skills + MCP 组合**，不会在宿主�
 
 参照 [巴别鸟官方教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html)，在“设置 > API秘钥”创建应用，复制应用详情里的 **APIKey**，不是 APP Key 或 APP Secret。为目标工程目录配置所需读写权限；默认个人文件目录必须在授权范围内。
 
-已加载的有效 MCP 连接先复用并只读验证，不重复打开密钥页。新输入的 Key 先通过个人文件读取与一页目录列表检查，再保存到用户私有配置。页面成功不表示当前会话已经加载 MCP；智能体分别报告。默认跳过配额查询，不上传测试文件。只有远程／无本机浏览器等限制才使用 [备用填写方法](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md)。
+已加载的有效 MCP 连接先复用并只读验证，不重复打开密钥页。六款桌面宿主的本地设置页会先通过个人文件读取与一页目录列表检查，再保存到用户私有配置；Today 在平台表单保存后，由 Today 对话单独进行目录检查。页面成功不表示当前会话已经加载 MCP；智能体分别报告。默认跳过配额查询，不上传测试文件。只有远程／无本机浏览器等限制才使用 [备用填写方法](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md)。
 
 ## 适配与验证边界
 

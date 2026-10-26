@@ -1,4 +1,4 @@
-# 项目云端同步巴别鸟插件 · WorkBuddy 0.5.0
+# 项目云端同步巴别鸟插件 · WorkBuddy 0.5.1
 
 配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。
 
@@ -10,7 +10,7 @@
 
 > 帮我安装 https://github.com/bypassdesign-dev/babelbird-plugins ，并连接我的巴别鸟账号。
 
-智能体读取 [INSTALL.md](../../INSTALL.md)，获取 v0.5.0（用户明确指定其他 ref 时保留），运行 `node install/install.mjs --host workbuddy`。需要 Node.js 20+。两项完整 Skill 安装到 `~/.workbuddy/skills/`；验证 Key 后 MCP 保存到 `~/.workbuddy/mcp.json`，不写生成缓存 `~/.workbuddy/.mcp.json`。
+智能体读取 [INSTALL.md](../../INSTALL.md)，获取 v0.5.1（用户明确指定其他 ref 时保留），运行 `node install/install.mjs --host workbuddy`。需要 Node.js 20+。两项完整 Skill 安装到 `~/.workbuddy/skills/`；验证 Key 后 MCP 保存到 `~/.workbuddy/mcp.json`，不写生成缓存 `~/.workbuddy/.mcp.json`。
 
 安装器自动打开同机中英文单密码框页面，同时由智能体提供可点击链接。粘贴 API Key 并保存即可；智能体自动有界等待结果，无需回复“已填写”。已有有效 MCP 先验证复用，避免重复填写；无法运行本地页时才使用 [备用入口](skills/babelbird-project-cloud/references/credential-entry.md)。
 

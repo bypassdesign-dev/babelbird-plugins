@@ -1,20 +1,32 @@
 # 个人智能体适配状态 / Personal agent adapter status
 
-核查日期：2026-10-26。产品：Meta Muse 个人智能体与 Today（中国版 https://todayai.cn ，国际版 https://today.ai ）。用户本次选择中国版，后续实测以中国版为准。Muse Code 是另一个产品，本次不以其配置证明 Muse 可用。
+核查日期：2026-10-26。版本：0.5.1 GitHub 测试版。产品为 Meta Muse 个人智能体与 Today（中国版 https://todayai.cn ，国际版 https://today.ai ）。Muse Code 是另一款产品；不得用它的配置证明 Muse 可用。
 
 ## 当前结论
 
-两款产品具备可探索的扩展入口；已完成实验安装分流和工程绑定，不等于已通过完整连接验收。
+Today 首次连接采用 [手动安装与填写 API Key 流程](../plugins/babelbird-cloud/skills/babelbird-setup/references/today-setup.md)。已观察到中国版账号的技能安装和“已连接”状态；自动弹出凭据页的目标未达成，真实工程同步仍待验收。Meta Muse 继续作为未验收的实验适配提供。
 
-| 项目 | Meta Muse | today.ai |
+| 项目 | Meta Muse | Today |
 | --- | --- | --- |
-| 官方公布的能力 | 云端工作区、自定义连接器、安全凭据隔离、社区 Skills | 云端电脑、文件与代码、社区 Skills |
-| 本分支完成 | 指定已确认 Skills 目录安装；原生凭据流程引导；`muse` 工程绑定 | 指定已确认 Skills 目录安装；原生 MCP 表单引导；`today` 工程绑定 |
+| 本版提供 | 已确认 Skills 目录的安装；原生凭据引导；`muse` 工程绑定 | 已确认 Skills 目录的安装；手动 MCP 配置模板与双语说明；`today` 工程绑定 |
 | 新工程默认目录 | `/个人文件/muse/<工程名>/` | `/个人文件/today/<工程名>/` |
-| 尚待验证 | 实际凭据表单、运行时连接器桥接、工具调用、原始字节传输、跨会话规则 | 实际账号 MCP 表单、工具加载、原始字节传输、跨会话规则 |
-| 当前发布状态 | 实验开发分支，非正式支持 | 实验开发分支，非正式支持 |
+| 平台实际证据 | 尚无登录后的连接验收 | 中国版网页账号出现两项活跃技能；Token 表单可填写；用户提交后显示“已连接” |
+| 尚待验证 | 凭据表单、连接器桥接、工具调用、传输、跨会话规则 | 实际目录工具调用、工程上传下载、跨会话规则、原生客户端窗口和国际版流程 |
+| 发布定位 | 实验适配 | 实验适配，首次连接需要手动操作 |
 
-本机未安装这两款客户端；不能用 Codex 的实际 MCP 连接测试代替它们的实机证据。安装器输出 `requires_platform_setup`，不会输出伪造的已连接状态或打开错误的 localhost 页面。共享同步核心保留既有云端目录；云端工作区和用户电脑文件需要分别确认访问权限。
+安装器返回 `requires_platform_setup`，不会把复制文件当成已连接，也不会打开云端 VM 的 localhost 页面。共享同步核心保留既有云端目录。云端工作区与用户电脑的本地文件需要分别确认访问权限。
+
+## Today 中国版实际操作记录
+
+1. 在已登录的中国版账号中，仅发送候选 GitHub 分支链接和安装请求。Today 报告安装完成，并在“设置 → Skills → 活跃技能”中实际观察到 `babelbird-setup` 和 `babelbird-project-cloud`。
+2. Today 对话未自动打开凭据表单，返回了手动 MCP 配置指引。这一步未达到自动弹窗目标，因此本版采用明确的手动说明。
+3. 在 `https://todayai.cn/connectors` 选择“添加自定义 MCP → 粘贴代码添加”，粘贴包内 JSON 模板，保留字面值 `Bearer ${BABELBIRD_API_KEY}`。用户确认页面提示并点击“下一步”后，页面显示预填名称、URL、Bearer token 和 Token 密码输入框。
+4. 用户自行填写并提交 Key 后，连接应用列表显示 BabelBird“已连接”。实际 Key 没有写入指南、模板或公开证据。
+5. URL-only 路线曾返回 unavailable；`Bearer <API_KEY>` 曾被拒绝为凭据格式不正确。一次表单在用户填写前消失，重新打开相同 JSON 流程后用户完成填写；尚未确认消失原因。
+
+本机 Today 中国版为 1.23.0（build 2000158，`ai.today.macos.app.cn`）。上述操作使用网页入口，没有原生客户端窗口控制证据。连接详情读取未能完成，未取得 Today 内目录工具的成功业务结果。**不将“已连接”解释为工程存储或自动同步已经验收通过。**
+
+后续验收需由 Today 实际读取 `/个人文件` 并列出一页目录，再在用户指定测试工程验证上传、回读、跨平台恢复和任务前后同步。默认不查询配额，首次连接不上传工程。国际版及 Muse 尚未进行登录后的凭据保存测试。
 
 ## 依据
 
@@ -24,18 +36,14 @@
 - [today.ai 官网](https://today.ai/)：公布社区 Skills、云端文件和代码能力。2026-10-26 直接读取官方页面公开资源，还观察到自定义 MCP、Bearer 认证、Token 输入与凭据验证状态的界面定义；**静态资源不能证明当前账号功能开放，更不能替代实际保存连接测试**。
 - [Muse Code 扩展文档](https://dev.meta.ai/docs/muse-code/extending)仅用于区分产品，未将其用户路径或 MCP 设置套用到 Muse 个人智能体。
 
-## 验收入口
+## 仓库检查
 
-本次开发分支验证：`node --test tests/*.test.mjs` 共 **60 项通过、0 失败、0 跳过**，包含 7 项新增个人智能体安装和绑定测试。已分别执行 `muse` / `today` 的真实安装命令，确认 Skills 完整复制、安装回执生效、返回原生设置引导且未启动 localhost 服务；两项 Skill 格式检查通过。修改前后进行了独立的指令场景推演，覆盖两款宿主、能力缺失和复用 Codex 云端绑定；这是指令验证，不是平台端到端测试。
+安装与同步回归包含 60 项测试，其中 7 项覆盖个人智能体：完整 Skills 复制、重复安装及本地修改保护、显式 Skills 目录、原生设置分流，以及复用现有 Codex 云端工程。它们不代替平台端到端测试。发布检查结果见 [VALIDATION.md](../VALIDATION.md)。
 
-浏览器实际访问 `https://today.ai/login` 与 `https://muse.ai/`，两者均显示未登录页面。没有提交凭据，也没有创建平台连接器；平台表单、只读连接、上传恢复及跨会话触发仍未验收。正式发布的 v0.5.0 不变。
-
-用户确认使用中国版后，已在真实浏览器打开 `https://todayai.cn/login`，观察到中国大陆手机号输入和服务协议确认；等待用户自行登录。此前国际版公开页面资源中的 MCP 表单定义不作为中国版账号的功能验收证据。安装引导现已明确保留用户选择的站点，不强制转到国际版。
-
-在登录后的对应产品中，使用本开发分支链接和“帮我安装并连接巴别鸟”启动测试。由平台原生安全界面收集 Key，智能体准备其余字段。收到 Key 后，先读取个人文件与一页目录，再按用户指定的测试工程验证上传、回读、换平台恢复和任务前后同步。没有连接器/安全凭据工具时准确报告能力缺失，不让用户把 Key 放进聊天。
-
-详细安装步骤由智能体读取 [专用引导](../plugins/babelbird-cloud/skills/babelbird-setup/references/personal-agents.md)，新用户无需阅读技术教程。
+安装智能体使用 [平台流程](../plugins/babelbird-cloud/skills/babelbird-setup/references/personal-agents.md)。Today 用户直接使用 [四步说明](../plugins/babelbird-cloud/skills/babelbird-setup/references/today-setup.md)，无需自己判断 MCP 配置字段。
 
 ## English
 
-These are experimental adapters, not verified native integrations. Installation uses a Skills directory discovered by the host or its native import tool. The host must present its own secure credential form and complete actual BabelBird directory calls. The installer never treats copied files as a successful connection. Muse still needs a verified custom connector bridge; today's public UI resources do not prove account-level availability. Local/cloud workspace access and cross-session rule loading must also be verified before claiming automatic sync support. Existing cloud project bindings take precedence over the new `muse` and `today` defaults.
+Version 0.5.1 publishes experimental personal-agent installation and binding support. Today uses a [manual first-time connection guide](../plugins/babelbird-cloud/skills/babelbird-setup/references/today-setup.md#english). A logged-in China web account showed both installed skills, the Token form and Connected status after the user entered a key. The install conversation did not open the form automatically. The local China client is 1.23.0, but the observed UI was its web account, not a native desktop test.
+
+Actual directory calls, project transfers and cross-session rule loading remain unverified in Today; the international site has not passed onboarding acceptance. Muse still needs credential-form and connector-bridge testing. `requires_platform_setup` is not a successful connection. Reuse existing cloud bindings and confirm workspace access before syncing local or cloud files.

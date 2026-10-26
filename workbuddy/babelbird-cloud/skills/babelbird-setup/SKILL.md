@@ -4,7 +4,7 @@ description: Use when installing BabelBird from its GitHub link, continuing setu
 display_name: "巴别鸟首次设置"
 description_zh: "首次配置巴别鸟 API Key，验证连接并启用工程自动同步。"
 description_en: "Configure a BabelBird API Key and enable project sync."
-version: "0.5.0"
+version: "0.5.1"
 author: "bypassdesign-dev"
 disable-model-invocation: false
 ---
@@ -15,7 +15,7 @@ disable-model-invocation: false
 
 ## 个人智能体分流
 
-实际产品是 Meta Muse **个人智能体**或 today.ai 时，先读 [平台原生连接](references/personal-agents.md)，使用 `muse` / `today` 实验适配。由平台安全界面收集 API Key，不走下面的本地页面流程，不套用 Muse Code 配置。必须核实 Skills 发现、连接器能力与真实目录读取；当前尚未完成两款产品的登录后端到端验收。
+实际产品是 Meta Muse **个人智能体**或 Today 时，先读 [平台原生连接](references/personal-agents.md)，使用 `muse` / `today` 实验适配。Today 无法自动打开表单时，直接提供 [四步填写说明](references/today-setup.md) 和其中的可复制配置，引导用户在平台 Token 框填写。由平台安全界面收集 API Key，不走下面的本地页面流程，不套用 Muse Code 配置。必须核实 Skills 发现、连接器能力与真实目录读取；两款产品均未完成工程同步端到端验收。
 
 ## 自动打开一个密码框
 

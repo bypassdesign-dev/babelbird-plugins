@@ -1,5 +1,15 @@
 # 更新记录 / Changelog
 
+## 0.5.1 — 2026-10-26（测试版 / prerelease）
+
+- 发布 Today / Meta Muse 实验安装分流：使用平台确认的 Skills 目录或导入工具，凭据交由平台安全界面管理；不将云端 localhost 当作本机设置页。
+- 新增 Today 中英文四步安装说明及可直接复制的 MCP 配置模板，明确“粘贴代码添加 → 下一步 → Token → 添加”的实际填写入口。
+- Today 中国版网页账号已观察到两项技能安装和用户填 Key 后的“已连接”状态。自动弹窗目标未达成，首次连接采用手动步骤；目录工具、工程上传下载和跨会话自动同步仍待实测。
+- Meta Muse 的原生凭据与连接器桥接仍未验收；两款个人智能体均保留实验标记。既有工程目录优先于新宿主默认目录。
+- 保留六款桌面宿主的本地填写页流程，统一 GitHub 安装版本为 v0.5.1。详细证据见 [验证记录](VALIDATION.md)。
+
+Today now has a bilingual manual setup guide and a ready-to-copy MCP template. China web-account testing observed both installed skills and Connected status after manual credential entry; automatic form opening, real project sync and cross-session triggers are not claimed. Today and Meta Muse remain experimental. Existing desktop setup flows and cloud project bindings are preserved.
+
 ## 0.5.0 — 2026-10-24（GitHub 测试版 / prerelease）
 
 - 统一 GitHub 安装器支持 Codex、WorkBuddy、CodeBuddy CLI、Claude Code、Cursor、Gemini CLI，自动安装用户级 Skills 并打开本地 API Key 页面。

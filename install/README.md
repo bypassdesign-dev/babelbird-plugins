@@ -1,10 +1,12 @@
-# 安装项目云端同步巴别鸟插件 0.5.0
+# 安装项目云端同步巴别鸟插件 0.5.1
 
 对当前智能体说：
 
 > 帮我安装 https://github.com/bypassdesign-dev/babelbird-plugins ，并连接我的巴别鸟账号。
 
-安装智能体先读取 [INSTALL.md](../INSTALL.md)，识别宿主并运行 `node install/install.mjs --host <id>`。支持 `codex`、`workbuddy`、`codebuddy`、`claude`、`cursor`、`gemini`，需要 Node.js 20+。没有指定 ref 时固定 v0.5.0；明确指定的测试 ref 必须保留，发布前验证使用当前 ref。
+Today 用户请使用 [Today 安装与填写 API Key](../plugins/babelbird-cloud/skills/babelbird-setup/references/today-setup.md)：首次连接需要手动导入配置，再在平台密码框填写 Key。Meta Muse 使用 [实验引导](../plugins/babelbird-cloud/skills/babelbird-setup/references/personal-agents.md)。以下本地页面流程适用于六款桌面宿主。
+
+安装智能体先读取 [INSTALL.md](../INSTALL.md)，识别宿主并运行 `node install/install.mjs --host <id>`。支持 `codex`、`workbuddy`、`codebuddy`、`claude`、`cursor`、`gemini`，需要 Node.js 20+。没有指定 ref 时固定 v0.5.1；明确指定的测试 ref 必须保留，发布前验证使用当前 ref。
 
 安装器复制两项自包含 Skill 到用户 Skills 目录，随后自动打开同机中英文 API Key 页面。分享返回的 URL，并运行返回的 `setupScript`，传入 `--host <id> --wait`，每次最多等待 25 秒，直至连接成功、取消、过期或助手退出。用户只需填写一个密码框并保存，不必回复“已填写”。
 

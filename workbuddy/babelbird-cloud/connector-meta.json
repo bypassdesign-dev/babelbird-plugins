@@ -7,7 +7,7 @@
   "description_en": "After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms.",
   "source": "bypassdesign-babelbird-cloud",
   "type": "mcp",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "auth_mode": "token",
   "minWorkbuddyVersion": "4.24.0",
   "examples_zh": [

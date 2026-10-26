@@ -4,7 +4,7 @@ description: Use when setting up BabelBird project sync, binding or restoring a 
 display_name: "项目云端同步巴别鸟插件"
 description_zh: "配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟，切换设备或智能体产品后也能同步回来。"
 description_en: "After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms."
-version: "0.5.0"
+version: "0.5.1"
 author: "bypassdesign-dev"
 ---
 

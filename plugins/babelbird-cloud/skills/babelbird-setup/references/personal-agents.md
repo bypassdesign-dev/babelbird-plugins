@@ -1,6 +1,6 @@
 # Meta Muse 与 today.ai：平台原生连接（实验适配）
 
-适用于 Meta **Muse 个人智能体**（不是 Muse Code）和 today.ai。当前分支只完成安装分流、同步核心和引导说明；两款产品的登录后凭据表单、工具加载及真实工程传输仍待验收。不得把“实验适配”报告成完整支持。
+适用于 Meta **Muse 个人智能体**（不是 Muse Code）和 Today。0.5.1 包含实验安装分流、工程绑定和引导说明。Today 中国版网页账号已观察到两项技能安装、手动凭据表单和“已连接”状态；自动弹窗、实际目录调用和工程同步仍未验收。Muse 尚无登录后连接验收。不得把“实验适配”报告成完整支持。
 
 ## 安装智能体负责的部分
 
@@ -13,19 +13,17 @@
 
 中国版入口为 https://todayai.cn ，国际版为 https://today.ai 。沿用用户当前或明确指定的站点；用户选择中国版时不要跳到国际版要求重新登录。两站登录状态及连接器开放情况分别核实，不假定共享账号或功能。中国版当前登录页使用中国大陆手机号，登录、验证码及服务协议由用户在原生页面完成；不向聊天索要这些信息。`today` 宿主 ID 和巴别鸟 MCP 地址不随站点改变。
 
-优先使用实际可用的原生连接器工具创建或打开远程 MCP 连接。如果工具不可用但可操作平台 UI，打开当前版本的连接应用入口，选择添加自定义 MCP。官方网页资源中可见该表单，但必须核对当前账号实际界面，不能仅依据字符串认定该账号已开放功能。
+先检查已有有效 BabelBird 连接并复用。有实际可用的原生连接器工具时，可使用它打开平台的安全表单。当前干净 Today 安装会话没有主动打开该表单，因此默认向用户展示 [Today 安装与填写 API Key](today-setup.md)，并直接给出当前站点的连接入口和 [可复制配置](today-mcp-template.json)。不要只说“去设置里填 MCP”，也不承诺自动弹窗。
 
-由智能体准备非密钥字段：
+中国版已经实际走通的操作：
 
-- 名称：`BabelBird` / `巴别鸟`。
-- MCP URL：`https://www.babel.cc/mcp`。
-- 传输：远程 HTTP / Streamable HTTP（若界面要求选择）。
-- 认证：Bearer token。用户只在平台的 Token 密码框里填写 **APIKey 原值**，不加 `Bearer `；平台生成 `Authorization: Bearer <APIKey>`。
-- 获取密钥入口：https://www.babel.cc/public/babelwiki/zh/mcp-integration.html 。
+1. 打开 `https://todayai.cn/connectors` 或客户端“设置 → 连接应用”，选择“添加自定义 MCP → 粘贴代码添加”。网页版需登录与客户端相同账号；此记录不等于原生客户端窗口验收。
+2. 原样粘贴 `today-mcp-template.json`，保留 `Authorization` 的值 `Bearer ${BABELBIRD_API_KEY}`。用户阅读并自行确认页面风险提示，点击“下一步”。不要换成 `<API_KEY>`，也不要把真实密钥写入 JSON。
+3. 页面预填名称 BabelBird、URL `https://www.babel.cc/mcp` 和 Bearer token。用户清空 Token 密码框已有内容，粘贴 **APIKey 原值**（不加 `Bearer `），点击“添加”。获取 Key 的官方说明：https://www.babel.cc/public/babelwiki/zh/mcp-integration.html 。
+4. 用户填写期间保留表单，不主动关闭或导航离开。若表单自行消失，先查看连接列表，未保存时再重开相同流程。只填 URL 的路线曾返回 unavailable，不作为推荐步骤。
+5. 有平台状态或 UI 访问能力时检查保存结果；没有这些能力时，说明用户可返回对话发送指南中的“检查巴别鸟连接”指令。不得把手动操作未发生当成成功，也不要重复索要已保存的 Key。
 
-把表单直接呈现给用户，提示“请在这里粘贴巴别鸟 API Key，然后保存并连接”。平台要求的连接授权由用户完成。利用平台状态或实际工具加载继续检查，不要求用户另外回复“已填写”。如果无权打开/预填表单，如实说明并只指向当前可见入口；不得宣称自动弹窗已经实现。
-
-保存后确认该 MCP 实际提供 `getFileInfoByPath` 和 `listFolder`，按下方检查。平台管理凭据，不写本机 MCP JSON，不以为需要重启云端 VM。尚未刷新工具时使用平台提供的刷新连接/新会话流程，复用已保存凭据。
+连接列表显示“已连接”之后，仍须确认当前对话实际加载 `getFileInfoByPath` 和 `listFolder`，按下方只读业务检查。平台管理凭据，不写本机 MCP JSON。工具尚未刷新时使用平台提供的刷新连接或新会话流程，复用已保存凭据。目录检查和工程传输尚未完成实测，分别报告状态。
 
 ## Meta Muse 个人智能体
 
@@ -55,4 +53,4 @@ Muse 使用自身的安全凭据库和自定义连接器机制；不能将 Muse 
 
 ## English handoff
 
-Use the host's native credential form for these personal agents. The user enters only their API Key; the agent prepares the BabelBird endpoint and Bearer authentication. Discover the actual Skills location or use the platform import tool. Never give the user a cloud VM's localhost URL. A `requires_platform_setup` result means the files are installed and setup must continue; it is not a successful connection. Muse's custom connector bridge and both products' live credential flows remain unverified. Sync only files accessible to the active workspace, and reuse the selected cloud project across devices and hosts.
+Use the platform's credential form for these personal agents. Discover the actual Skills location or use its import tool; never give the user a cloud VM's localhost URL. `requires_platform_setup` means installation must continue, not that a connection passed. For Today, provide the [manual setup guide](today-setup.md#english) and [JSON template](today-mcp-template.json) when no native tool can open the form. Keep the placeholder unchanged; the user clears the Token field and enters the raw API Key there. Preserve the form during entry and reuse existing connections. The China web account showed both installed skills and Connected status after manual entry; directory calls, transfers and cross-session sync remain unverified. Muse's credential flow and connector bridge remain unverified. Sync only accessible workspace files and reuse an existing cloud project.

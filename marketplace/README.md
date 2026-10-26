@@ -1,6 +1,6 @@
 # 插件市场上线材料 / Marketplace submission kit
 
-版本：0.5.0。核对日期：2026-10-24。发布主体账号：bypassdesign-dev。本轮优先交付 GitHub 安装版，支持范围见 [智能体清单](../docs/SUPPORTED_AGENTS.md)。
+版本：0.5.1。材料更新日期：2026-10-26；市场规则核查沿用 2026-10-24 记录。发布主体账号：bypassdesign-dev。本轮优先交付 GitHub 安装版，支持范围见 [智能体清单](../docs/SUPPORTED_AGENTS.md)。
 
 本目录是准备材料，**不是已上架或已具备全部提交条件的声明**。GitHub 测试版可以独立安装；正式市场审核还有下列外部条件。
 

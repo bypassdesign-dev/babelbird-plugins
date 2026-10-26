@@ -1,8 +1,8 @@
-# BabelBird Project Cloud Sync 0.5.0
+# BabelBird Project Cloud Sync 0.5.1
 
 [简体中文](README.md) · [Supported agents](docs/SUPPORTED_AGENTS.md) · [Release notes](CHANGELOG.md)
 
-**Development branch:** Meta Muse personal agent and today.ai are under evaluation. Native credential setup guidance and project binding are included, but live onboarding has not passed acceptance. They are not part of the published v0.5.0 support list. See [status and evidence](docs/PERSONAL_AGENTS.md).
+**Today users: follow the [Today setup guide](plugins/babelbird-cloud/skills/babelbird-setup/references/today-setup.md#english).** First-time connection requires manually pasting a ready-made configuration and entering your API Key. Automatic form opening was not achieved. Skills installation and Connected status were observed on a China web account; project sync remains unverified. Meta Muse remains experimental. See [status and evidence](docs/PERSONAL_AGENTS.md).
 
 After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms.
 
@@ -14,11 +14,11 @@ Tell your current agent:
 
 > Install https://github.com/bypassdesign-dev/babelbird-plugins and connect my BabelBird account.
 
-The agent identifies its host, checks out v0.5.0, installs two complete skills and opens a local setup page with Chinese and English text. Paste your API Key into its single password field and click **Save and connect**. The page includes a link to get a key. Do not send your key in chat; you do not need to reply “done.”
+For Codex, WorkBuddy, CodeBuddy CLI, Claude Code, Cursor and Gemini CLI, the agent identifies its host, checks out v0.5.1, installs two complete skills and opens a local setup page with Chinese and English text. Paste your API Key into its single password field and click **Save and connect**. The page includes a link to get a key. Do not send your key in chat; you do not need to reply “done.”
 
 If the browser does not open, use the link supplied by the agent. Node.js 20+ and a browser on the same machine as the helper are required. The helper verifies access before saving private user configuration. Restart the host or reopen its session if it has not loaded the new connection. WorkBuddy may require you to approve third-party MCP permissions in the app; the installer does not approve them for you.
 
-For installing agents: follow [INSTALL.md](INSTALL.md). Run `node install/install.mjs --host <id>`, share the returned URL and poll the returned `setupScript` with `--host <id> --wait` until connected, cancelled, expired or closed. Each wait lasts at most 25 seconds. Honor an explicitly requested ref; otherwise pin v0.5.0. Before the release tag exists, validate against the current test ref.
+For installing agents: follow [INSTALL.md](INSTALL.md) and route by host. Today uses the manual guide above; Meta Muse uses its experimental guide. For the six desktop hosts, run `node install/install.mjs --host <id>`, share the returned URL and poll the returned `setupScript` with `--host <id> --wait` until connected, cancelled, expired or closed. Each wait lasts at most 25 seconds. Honor an explicitly requested ref; otherwise pin v0.5.1. Before the release tag exists, validate against the current test ref.
 
 The GitHub installer provides a **user-level Skills + MCP bundle**. It does not register a native plugin-menu entry. Native Codex / Claude Code packages and WorkBuddy connector sources remain available as separate distribution options.
 
@@ -36,7 +36,7 @@ Local-only changes upload; remote-only changes download. Concurrent changes are 
 
 Get your APIKey from **Settings > API keys > application details** in BabelBird, not APP Key or APP Secret. Grant access to the intended folder. See the [official guide](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html).
 
-Reuse an existing loaded, valid MCP connection. For a new key, the page reads Personal Files and lists one page before saving private configuration. A successful form does not prove the current host session has loaded MCP; the agent checks those states separately. Quota queries and test uploads are not part of default setup. [Manual entry](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md) is a fallback for environments unable to run the local page.
+Reuse an existing loaded, valid MCP connection. For the six desktop hosts, the local page reads Personal Files and lists one page before saving private configuration. Today saves credentials through its platform form and then needs a separate directory check in a Today conversation. A successful form does not prove the current host session has loaded MCP; the agent checks those states separately. Quota queries and test uploads are not part of default setup. [Manual entry](plugins/babelbird-cloud/skills/babelbird-project-cloud/references/credential-entry.md) is a fallback for environments unable to run the local page.
 
 The installer refuses to overwrite unmanaged or locally modified same-name skills. The agent preserves and resolves these files without handing technical decisions to a novice user.
 

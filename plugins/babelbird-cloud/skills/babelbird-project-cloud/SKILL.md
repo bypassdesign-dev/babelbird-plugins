@@ -2,7 +2,7 @@
 name: babelbird-project-cloud
 description: Use when setting up BabelBird project sync, binding or restoring a cloud project, or starting and finishing work in a project with .babelbird-sync.json, including 巴别鸟自动保存、跨设备或跨智能体同步工程. Requires local file access and authenticated BabelBird MCP.
 metadata:
-  version: "0.5.0"
+  version: "0.5.1"
 ---
 
 # 项目云端同步巴别鸟插件 / BabelBird Project Cloud Sync

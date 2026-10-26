@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "BabelBird": {
+      "url": "https://www.babel.cc/mcp",
+      "headers": {
+        "Authorization": "Bearer ${BABELBIRD_API_KEY}"
+      }
+    }
+  }
+}

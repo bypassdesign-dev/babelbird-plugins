@@ -1,6 +1,6 @@
-# 支持的智能体与验证边界（0.5.0）
+# 支持的智能体与验证边界（0.5.1）
 
-GitHub 安装命令为 `node install/install.mjs --host <id>`，要求 Node.js 20+。安装到用户 Skills 目录的是 `babelbird-setup` 与 `babelbird-project-cloud` 两项自包含 Skill，MCP 在本地密钥页验证通过后写入用户私有配置。此方式不注册原生插件菜单；原生 Codex / Claude Code 包仍保留。
+GitHub 安装命令为 `node install/install.mjs --host <id>`，要求 Node.js 20+。以下六款桌面宿主安装到用户 Skills 目录的是 `babelbird-setup` 与 `babelbird-project-cloud` 两项自包含 Skill，MCP 在本地密钥页验证通过后写入用户私有配置。此方式不注册原生插件菜单；原生 Codex / Claude Code 包仍保留。
 
 ## 已实现安装适配
 
@@ -29,9 +29,9 @@ Claude 配置和用户 Skills 依据 [官方 MCP 文档](https://code.claude.com
 
 ### 个人智能体实验适配
 
-当前开发分支增加 `muse`（Meta Muse 个人智能体，不是 Muse Code）和 `today`。安装需平台提供的 Skills 导入工具，或先确认其 Skills 绝对目录后传入 `--skills-dir`。它们通过平台原生安全界面收集密钥，不能复用桌面 localhost 页面。新工程默认分区为 `个人文件/muse/工程名/` 和 `个人文件/today/工程名/`，已有目录优先。
+0.5.1 发布版包含实验宿主 `muse`（Meta Muse 个人智能体，不是 Muse Code）和 `today`。安装需平台提供的 Skills 导入工具，或先确认其 Skills 绝对目录后传入 `--skills-dir`。它们通过平台原生安全界面收集密钥，不能复用桌面 localhost 页面。新工程默认分区为 `个人文件/muse/工程名/` 和 `个人文件/today/工程名/`，已有目录优先。
 
-**未完成客户端端到端验收，不计入已发布的六款安装适配。** Muse 仍需在平台内验证自定义连接器桥接；today.ai 需验证实际账号的 MCP 表单与工具加载。详情及依据见 [个人智能体状态](PERSONAL_AGENTS.md)。
+**这两款仍为实验适配，未完成工程同步端到端验收。** Today 中国版网页账号已观察到两项技能安装、手动 Token 表单和“已连接”状态；安装后自动弹窗尚未实现，请使用 [Today 手动安装说明](../plugins/babelbird-cloud/skills/babelbird-setup/references/today-setup.md)。Today 内目录工具、上传下载和跨会话触发仍待验收。Muse 的凭据表单和自定义连接器桥接均待实测。详情及依据见 [个人智能体状态](PERSONAL_AGENTS.md)。
 
 ### 其他候选
 
@@ -45,4 +45,4 @@ Claude 配置和用户 Skills 依据 [官方 MCP 文档](https://code.claude.com
 | OpenCode | 配置格式与能力需按明确版本锁定并测试，尚未提供版本化适配。 |
 | Windsurf / Devin | 产品命名与入口变化需要先确认实际产品、版本和配置合同，暂不声明兼容。 |
 
-这些项目属于后续路线，不计入 0.5.0 的已支持安装列表。在这些产品中发起安装时，应说明具体缺失适配，不猜写配置，不默认退回手工字段教程并宣称安装完成。
+这些项目属于后续路线，不计入 0.5.1 的已支持安装列表。在这些产品中发起安装时，应说明具体缺失适配，不猜写配置，不默认退回手工字段教程并宣称安装完成。

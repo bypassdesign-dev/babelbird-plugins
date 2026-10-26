@@ -1,5 +1,20 @@
 # 验证记录
 
+## 0.5.1 Today 手动连接说明与个人智能体实验适配
+
+日期：2026-10-26。GitHub 测试版，未提交插件市场审核。
+
+- 当前发布候选完整执行 `node --test tests/*.test.mjs`：**60 项通过、0 失败、0 跳过**。包含 7 项个人智能体安装与绑定检查，保留六款桌面宿主、填写页、同步冲突和文件权限回归。
+- 两项 Codex Skill 格式验证通过；JSON 可解析、文档相对链接有效、两份分发包共用脚本/资源/引导一致。Today 指南内 JSON 与随包模板一致，保留字面值 `Bearer ${BABELBIRD_API_KEY}`。公开文件未检出巴别鸟 Key 格式。
+- 在全新临时 Skills 目录实际运行 Today 安装命令，回执版本为 0.5.1，双语指南和配置模板均随包安装，模板占位符保持不变；返回 `requires_platform_setup`，没有启动 localhost 页面。这是安装包检查，不代替 Today 平台验收。
+- 在登录后的 Today 中国版网页账号中，仅给候选分支链接和安装请求，实际观察到 `babelbird-setup`、`babelbird-project-cloud` 出现在活跃技能列表。该安装会话没有主动打开密钥表单，自动弹窗目标未通过。
+- 通过“连接应用 → 添加自定义 MCP → 粘贴代码添加”，使用本版同一模板并点击“下一步”，实际打开了预填名称、地址、Bearer 认证的 Token 密码框。用户填写并提交后，列表显示 BabelBird“已连接”。本次按用户选择，发布手动说明作为首次连接流程。
+- URL-only 路线曾返回 unavailable；`Bearer <API_KEY>` 占位方式被拒绝。一度出现填写窗口提前消失，重新进入同一 JSON 流程后完成填写，原因仍未确认。指南包含相应恢复步骤，不宣称该平台问题已修复。
+
+本机安装 Today 中国版 1.23.0（build 2000158），实际界面操作发生在中国版网页账号。**没有完成原生客户端窗口、Today 内目录工具、工程上传下载、跨会话自动同步或国际版验收。** 连接详情读取未能完成，不能以“已连接”替代业务成功。Meta Muse 的登录后凭据流程及连接器桥接也未验证，继续标为实验适配。完整范围见 [个人智能体状态](docs/PERSONAL_AGENTS.md)。
+
+Codex / WorkBuddy 的真实云端及浏览器证据沿用下方 0.5.0 记录，本次重新执行其仓库回归，没有重新收集用户 Key 或上传工程。Today 安装、填写和连接检查步骤见 [双语指南](plugins/babelbird-cloud/skills/babelbird-setup/references/today-setup.md)。
+
 ## 0.5.0 GitHub 通用安装与中英文填写页
 
 日期：2026-10-24。macOS，Node.js 24.19.0，WorkBuddy 5.2.5；GitHub 测试版，不代表官方市场审核通过。
