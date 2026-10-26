@@ -2,6 +2,8 @@
 
 [English](README.en.md) · [支持的智能体](docs/SUPPORTED_AGENTS.md) · [更新记录](CHANGELOG.md)
 
+**当前开发分支：**正在适配 Meta Muse 个人智能体和 today.ai。已添加平台原生密钥流程的安装引导和工程绑定，仍待登录后的完整验收；不包含在已发布的 v0.5.0 支持范围内。[查看状态](docs/PERSONAL_AGENTS.md)。
+
 配置插件后可以把codex/workbuddy的本地项目/工程文件自动同步到巴别鸟网盘，切换设备或智能体产品后也能同步回来。
 
 英文名称：**BabelBird Project Cloud Sync**。0.5.0 是 GitHub 测试版，安装适配支持 Codex、WorkBuddy、CodeBuddy CLI、Claude Code、Cursor 和 Gemini CLI；适配支持不等于每款客户端均已完成实机端到端验证，实际范围见 [验证记录](VALIDATION.md)。

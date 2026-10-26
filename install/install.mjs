@@ -1,10 +1,11 @@
 import { mkdir, readFile, writeFile, readdir, lstat, cp, rename, rm, open, realpath } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash, randomBytes } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { HOSTS, hostPaths } from '../plugins/babelbird-cloud/skills/babelbird-setup/scripts/host-config.mjs';
+import { PERSONAL_HOSTS } from '../plugins/babelbird-cloud/skills/babelbird-setup/scripts/personal-hosts.mjs';
 const exec = promisify(execFile);
 const source = fileURLToPath(new URL('../plugins/babelbird-cloud/skills/', import.meta.url));
 const names = ['babelbird-setup', 'babelbird-project-cloud'];
@@ -36,7 +37,16 @@ async function owned(directory) {
 }
 
 export async function installSkills(host, options = {}) {
-  const paths = await hostPaths(host, options);
+  const personal = Object.hasOwn(PERSONAL_HOSTS, host);
+  let paths;
+  if (personal) {
+    if (typeof options.skillsDirectory !== 'string' || !options.skillsDirectory) throw new Error('Discover the platform Skills directory first / 请由智能体先确认平台技能目录。');
+    if (!isAbsolute(options.skillsDirectory)) throw new Error('Use an absolute Skills directory / 技能目录必须是已确认的绝对路径。');
+    paths = { skills: options.skillsDirectory };
+  } else {
+    if (options.skillsDirectory !== undefined) throw new Error('--skills-dir is only for personal agents / 仅个人智能体使用此参数。');
+    paths = await hostPaths(host, options);
+  }
   await mkdir(paths.skills, { recursive: true });
   if ((await lstat(paths.skills)).isSymbolicLink()) throw new Error('Skill directory is a link / 技能目录使用了链接。');
   let lock;
@@ -63,7 +73,12 @@ export async function installSkills(host, options = {}) {
       catch (error) { if (exists) await rename(backup, destination); throw error; }
       if (exists) await rm(backup, { recursive: true });
     }
-    return { host, version: '0.5.0', skills: paths.skills, setupScript: join(paths.skills, 'babelbird-setup/scripts/setup-host.mjs') };
+    return {
+      host, version: '0.5.0', skills: paths.skills,
+      ...(personal
+        ? { stage: 'experimental', connectionMode: 'platform_credentials', setupGuide: join(paths.skills, 'babelbird-setup/references/personal-agents.md') }
+        : { setupScript: join(paths.skills, 'babelbird-setup/scripts/setup-host.mjs') }),
+    };
   } finally {
     for (const stage of stages) await rm(stage, { recursive: true, force: true });
     await lock.close();
@@ -73,17 +88,25 @@ export async function installSkills(host, options = {}) {
 
 async function main(args) {
   if (Number(process.versions.node.split('.')[0]) < 20) throw new Error('Node.js 20+ is required / 需要 Node.js 20 或更新版本。');
-  if (args.length === 1 && args[0] === '--list') { console.log(JSON.stringify(HOSTS)); return; }
-  let host, codexBin = 'codex', noOpen = false, installOnly = false;
+  if (args.length === 1 && args[0] === '--list') { console.log(JSON.stringify({ ...HOSTS, ...PERSONAL_HOSTS })); return; }
+  let host, skillsDirectory, codexBin = 'codex', noOpen = false, installOnly = false;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--host') host = args[++i];
+    else if (args[i] === '--skills-dir') {
+      skillsDirectory = args[++i];
+      if (!skillsDirectory || skillsDirectory.startsWith('--')) throw new Error('--skills-dir requires a directory / 缺少技能目录。');
+    }
     else if (args[i] === '--codex-bin') codexBin = args[++i];
     else if (args[i] === '--no-open') noOpen = true;
     else if (args[i] === '--install-only') installOnly = true;
     else throw new Error('Usage: node install/install.mjs --host <host> [--codex-bin <path>]');
   }
-  const installed = await installSkills(host);
+  const installed = await installSkills(host, { skillsDirectory });
   if (installOnly) { console.log(JSON.stringify({ ...installed, status: 'installed_not_connected' })); return; }
+  if (installed.connectionMode === 'platform_credentials') {
+    console.log(JSON.stringify({ ...installed, status: 'requires_platform_setup', message: 'Continue with setupGuide to open the native credential form / 继续读取 setupGuide，打开平台原生密钥表单；尚未连接。' }));
+    return;
+  }
   const setupArgs = [installed.setupScript, '--host', host, '--start', '--codex-bin', codexBin, ...(noOpen ? ['--no-open'] : [])];
   try {
     const launched = await exec(process.execPath, setupArgs, { timeout: 20000, windowsHide: true });

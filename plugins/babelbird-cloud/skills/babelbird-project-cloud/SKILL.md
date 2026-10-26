@@ -13,7 +13,9 @@ metadata:
 
 ## 首次使用：填写 API Key
 
-首次使用先检查当前已加载的巴别鸟 MCP；有效时复用并只读验证，不重复要求填写。缺少凭据时主动执行 `babelbird-setup`，按实际宿主 ID（`codex`、`workbuddy`、`codebuddy`、`claude`、`cursor`、`gemini`）打开同机中英文单密码框页面，分享返回的 URL，并以 `--host <id> --wait` 自动等待结果，每次最多 25 秒，不要求额外回复“已填写”。页面检查成功和宿主已加载 MCP 分别验证；WorkBuddy 第三方 MCP 权限由用户在应用内批准。
+Meta Muse 个人智能体 / today.ai 使用 `muse` / `today` 实验分支，先读 `babelbird-setup` 的 [平台原生连接](../babelbird-setup/references/personal-agents.md)。密钥交由平台原生安全界面管理；不向用户发送云端 VM 的本地设置页地址。仅同步当前平台实际可访问的工作区，平台云端文件不等于用户电脑文件；两款产品的完整实机连接尚待验证。
+
+其余六款宿主首次使用先检查当前已加载的巴别鸟 MCP；有效时复用并只读验证，不重复要求填写。缺少凭据时主动执行 `babelbird-setup`，按实际宿主 ID（`codex`、`workbuddy`、`codebuddy`、`claude`、`cursor`、`gemini`）打开同机中英文单密码框页面，分享返回的 URL，并以 `--host <id> --wait` 自动等待结果，每次最多 25 秒，不要求额外回复“已填写”。页面检查成功和宿主已加载 MCP 分别验证；WorkBuddy 第三方 MCP 权限由用户在应用内批准。
 
 读取 [首次配置流程](references/setup.md#首次配置流程) 和 [API Key 填写入口](references/credential-entry.md)。需要获取 Key 时使用 [官方教程](https://www.babel.cc/public/babelwiki/zh/mcp-integration.html) 与 [获取步骤](references/api-key.md)：需要应用详情里的 APIKey，不是 APP Key 或 APP Secret。普通超时不代表密钥失效；仅明确无效或更换账号／密钥时重新填写。手工配置只作本地页不可用的备用方案，真实密钥不得进入聊天、工程或分发包。
 
@@ -47,6 +49,8 @@ metadata:
 | Claude Code | `/个人文件/claude/<工程名>/` |
 | Cursor | `/个人文件/cursor/<工程名>/` |
 | Gemini CLI | `/个人文件/gemini/<工程名>/` |
+| Meta Muse 个人智能体（实验） | `/个人文件/muse/<工程名>/` |
+| today.ai（实验） | `/个人文件/today/<工程名>/` |
 
 按实际应用识别宿主，不按模型名、工程内容或对话中提到的产品名判断。用户明确指定的云端目录优先，直接作为工程根目录，不再追加宿主或工程名。其他宿主或宿主无法确定时，询问目标目录，不猜测分区。
 

@@ -6,6 +6,7 @@ import { randomBytes } from 'node:crypto';
 import { startSetup } from './setup-server.mjs';
 import { verifyConnection, SetupError } from './mcp-check.mjs';
 import { HOSTS, hostPaths, saveHostConnection } from './host-config.mjs';
+import { PERSONAL_HOSTS, platformSetup } from './personal-hosts.mjs';
 
 const script = fileURLToPath(import.meta.url);
 export function browserCommand(platform, url) {
@@ -108,10 +109,14 @@ export async function main(args) {
     if (args[i] === '--codex-bin') { codexBin = args[++i]; if (!codexBin) throw new SetupError('arguments', '缺少 Codex 可执行文件路径。'); }
     else if (args[i] === '--host') host = args[++i];
   }
-  if (args.includes('--list')) { console.log(JSON.stringify(HOSTS)); return; }
+  if (args.includes('--list')) { console.log(JSON.stringify({ ...HOSTS, ...PERSONAL_HOSTS })); return; }
   if (!host) {
     try { host = JSON.parse(await readFile(new URL('../installed-host.json', import.meta.url), 'utf8')).host; }
     catch { /* Native plugin installs have no host marker; the calling agent supplies --host. */ }
+  }
+  if (Object.hasOwn(PERSONAL_HOSTS, host)) {
+    console.log(JSON.stringify(platformSetup(host)));
+    return;
   }
   if (!Object.hasOwn(HOSTS, host)) throw new SetupError('arguments', 'Choose the actual host with --host. 请由安装智能体选择实际宿主。');
   const path = await stateFile(host);

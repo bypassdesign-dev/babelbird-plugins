@@ -1,6 +1,6 @@
 ---
 name: babelbird-setup
-description: Install or connect BabelBird, open its local API Key form, and verify the MCP connection. Use for GitHub plugin installation, first setup, missing API Key, or changing a connection, including 安装巴别鸟、填写APIKEY、打开密钥页面、首次连接.
+description: Use when installing BabelBird from GitHub, setting up its API Key, changing a connection, or checking MCP access, including 安装巴别鸟、填写APIKEY、首次连接、Muse 和 today.ai 个人智能体接入.
 metadata:
   version: "0.5.0"
 ---
@@ -8,6 +8,10 @@ metadata:
 # 巴别鸟首次设置
 
 用户通过 GitHub 链接要求安装时，文件安装后主动继续连接，不等待用户知道 Skill 名称。只下载、离线安装或稍后配置时尊重范围。GitHub 安装是用户级 Skills + MCP 组合，不注册原生插件菜单。
+
+## 个人智能体分流
+
+实际产品是 Meta Muse **个人智能体**或 today.ai 时，先读 [平台原生连接](references/personal-agents.md)，使用 `muse` / `today` 实验适配。由平台安全界面收集 API Key，不走下面的本地页面流程，不套用 Muse Code 配置。必须核实 Skills 发现、连接器能力与真实目录读取；当前尚未完成两款产品的登录后端到端验收。
 
 ## 自动打开一个密码框
 
@@ -38,4 +42,4 @@ metadata:
 
 默认跳过 `getUsageAndQuota`。目录读取超时最多重试一次，401/403、权限失败和真实传输失败如实报告；配额超时不证明密钥失效。
 
-仅安装连接时不上传、扫描或绑定工程。用户启用同步后进入 `babelbird-project-cloud`：新工程默认 `个人文件/<host>/工程名/`，六个 host ID 分别对应各自分区；既有绑定或用户指定目录优先，跨设备和跨智能体继续原目录。任务编辑前、每批修改后、结束前同步，不提供常驻后台服务。
+仅安装连接时不上传、扫描或绑定工程。用户启用同步后进入 `babelbird-project-cloud`：新工程默认 `个人文件/<host>/工程名/`，按实际宿主使用对应分区；既有绑定或用户指定目录优先，跨设备和跨智能体继续原目录。任务编辑前、每批修改后、结束前同步，不提供常驻后台服务。

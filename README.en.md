@@ -2,6 +2,8 @@
 
 [简体中文](README.md) · [Supported agents](docs/SUPPORTED_AGENTS.md) · [Release notes](CHANGELOG.md)
 
+**Development branch:** Meta Muse personal agent and today.ai are under evaluation. Native credential setup guidance and project binding are included, but live onboarding has not passed acceptance. They are not part of the published v0.5.0 support list. See [status and evidence](docs/PERSONAL_AGENTS.md).
+
 After setup, automatically sync local Codex/WorkBuddy project files to BabelBird and sync them back when you switch devices or AI agent platforms.
 
 Chinese product name: **项目云端同步巴别鸟插件**. This is a GitHub prerelease. Installation adapters cover Codex, WorkBuddy, CodeBuddy CLI, Claude Code, Cursor and Gemini CLI; adapter support does not mean every client has passed end-to-end testing.

@@ -59,7 +59,7 @@ export async function readBinding(root) {
 }
 
 export async function bindProject(root, cloud, host) {
-  if (!['codex', 'workbuddy', 'codebuddy', 'claude', 'cursor', 'gemini'].includes(host)) throw new Error('Unknown agent host');
+  if (!['codex', 'workbuddy', 'codebuddy', 'claude', 'cursor', 'gemini', 'muse', 'today'].includes(host)) throw new Error('Unknown agent host');
   const normalized = cloudTarget(cloud);
   const existing = await optionalJson(root, BINDING);
   if (existing && (existing.cloud.endpoint !== normalized.endpoint || existing.cloud.folderId !== normalized.folderId)) throw new Error('Project is already bound to another cloud directory');
